@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: xiong_huang_new
-  m_Shader: {fileID: 4800000, guid: 39ab10d6b47cc4843bc85a9490ef71f3, type: 3}
+  m_Name: xiong_huang_new_06
+  m_Shader: {fileID: 4800000, guid: a890990a4e7fbbe4eb27c9ea18abbc13, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -84,17 +84,18 @@ Material:
     - _Diffuse: 1
     - _DstBlend: 0
     - _EdgeFade: 0.66
-    - _FurAlpha: 0.17
-    - _FurDensity: 1.96
+    - _FurAlpha: 0.164
+    - _FurDensity: 2.21
     - _FurDensityT: 0
     - _FurHardness: 1
-    - _FurLength: 0.06
+    - _FurLength: 0.072
     - _FurLength_in: 0.65
     - _FurShading: 0.84
-    - _FurThinness: 6.9
+    - _FurThinness: 7.68
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _GravityStrength: 0.038
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -109,12 +110,14 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.49056602, g: 0.38643643, b: 0.38643643, a: 0}
+    - _Color: {r: 0.3773585, g: 0.31149876, b: 0.31149876, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ForceGlobal: {r: 0, g: 0, b: 0, a: 0}
     - _ForceLocal: {r: 0, g: -0, b: 0, a: 0}
     - _FurColor: {r: 1, g: 1, b: 1, a: 1}
     - _FurColor2: {r: 1, g: 1, b: 1, a: 1}
+    - _FurPatternColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Gravity: {r: 0, g: -1, b: 0, a: 0}
     - _RimColor: {r: 1, g: 0.9292453, b: 0.9636665, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _Specular: {r: 0.14236861, g: 0.11076006, b: 0.1792453, a: 1}
