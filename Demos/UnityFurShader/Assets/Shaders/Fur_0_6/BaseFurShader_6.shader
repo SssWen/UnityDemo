@@ -22,11 +22,9 @@
         _FurDensity ("Fur Density", Range(0, 4)) = 0.11
         _FurThinness ("Fur Thinness", Range(0.01, 10)) = 1
         _FurShading ("Fur Shading", Range(0.0, 1)) = 0.25
-
-        _ForceGlobal ("Force Global", Vector) = (0, 0, 0, 0)
-        _ForceLocal ("Force Local", Vector) = (0, 0, 0, 0)
         
-         
+        _Gravity("Gravity Direction", Vector) = (0,-1,0,0)
+		_GravityStrength("Gravity Strength", Range(0,1)) = 0.25
 
         _RimColor ("Rim Color", Color) = (0, 0, 0, 1)
         _RimPower ("Rim Power", Range(0.0, 8.0)) = 6.0

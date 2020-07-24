@@ -41,11 +41,8 @@ fixed _FurDensity;
 fixed _FurThinness;
 fixed _FurShading;
 
-
-float4 _ForceGlobal;
-float4 _ForceLocal;
-
-
+fixed4 _Gravity;
+fixed _GravityStrength;
 
 fixed4 _RimColor;
 half _RimPower;
@@ -64,23 +61,18 @@ v2f vert_surface(appdata_base v)
 v2f vert_base(appdata_base v)
 {
     v2f o;
-    // float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
-    // P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
-    float3 P = v.vertex.xyz;
-    float3 add1 = v.normal * _FurLength * FURSTEP; 
-    float3 add2 = clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
-    // add2 = 0;
+
+    half3 direction = lerp(v.normal, _Gravity * _GravityStrength + v.normal * (1 - _GravityStrength), FURSTEP);
+	float3 P =  direction * _FurLength * FURSTEP;
     // add mask calculate. 
     o.uv2.xy = TRANSFORM_TEX(v.texcoord, _MaskTex);
     o.uv2.zw = TRANSFORM_TEX(v.texcoord, _FurColorTex); 
 
     float4 mask = tex2Dlod(_MaskTex,float4(o.uv2.xy,0,0));    
-    P = P + (add1 + add2) * mask.r;
-    // P = P + (add1 + add2);
+
+    P =  v.vertex.xyz + P * mask.r;
     
     o.worldNormal = UnityObjectToWorldNormal(v.normal);
-    // float3 posY = v.normal*_FurDensityT*saturate(v.normal.y);
-    // P = P + posY;
     o.pos = UnityObjectToClipPos(float4(P, 1.0));
     
     o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
