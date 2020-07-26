@@ -363,6 +363,16 @@ VertexOutputForwardBase_FunDream vertForwardBase_FunDream (VertexInput_FunDream 
     UNITY_TRANSFER_INSTANCE_ID(v, o);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+#if _FUR
+	// æ¯›å‘åç§»è®¡ç®—,æ·»åŠ mask,æœ€åˆè®¡ç®—å…¬å¼:https://xbdev.net/directx3dx/specialX/Fur/
+	o.uv.xy = TRANSFORM_TEX(v.texcoord, _FurColorTex);
+	o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);     
+    float4 mask = tex2Dlod(_MaskTex,float4(o.uv.xy,0,0));    
+  	half3 direction = lerp(v.normal, _Gravity * _GravityStrength + v.normal * (1 - _GravityStrength), FURSTEP);
+	float3 pos =  direction * _FurLength * FURSTEP;	
+	v.vertex.xyz += pos * mask.r;
+#endif 
+
     float4 posWorld = mul(unity_ObjectToWorld, v.vertex);
     #if UNITY_REQUIRE_FRAG_WORLDPOS
         #if UNITY_PACK_WORLDPOS_WITH_TANGENT
@@ -900,9 +910,9 @@ FragmentData frag( half4 i_tex, half3 i_eyeVec, half3 i_viewDirForParallax, floa
 
 
 		// 1  |	  2	   | 3
-		//¡ª¡ª ¡ª¡ª¡ª¡ª ¡ª¡ª
-		// 4  | 5£¨uv£©| 6
-		//¡ª¡ª ¡ª¡ª¡ª¡ª ¡ª¡ª
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// 4  | 5ï¿½ï¿½uvï¿½ï¿½| 6
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		// 7  |   8    | 9
 
 		//half u = id.x;
@@ -1008,6 +1018,18 @@ half4 fragForwardBaseInternal_FunDream(VertexOutputForwardBase_FunDream i)
 	c.rgb += Emission(i.tex.xy);
 
 	UNITY_APPLY_FOG(i.fogCoord, c.rgb);
+
+#if _FUR // Only Change Alpha
+    fixed alpha = tex2D(_LayerTex, TRANSFORM_TEX(i.tex.xy, _LayerTex)).r;
+	alpha = step(lerp(_CutoffStart, _CutoffEnd, FUR_OFFSET), alpha);
+    c.a = 1 - FUR_OFFSET*FUR_OFFSET;
+	c.a += dot(-s.eyeVec, s.normalWorld) - _EdgeFade;
+	c.a = max(0, c.a);
+	c.a *= alpha;
+    return c;
+#endif
+
+
 
 	return c;
 
