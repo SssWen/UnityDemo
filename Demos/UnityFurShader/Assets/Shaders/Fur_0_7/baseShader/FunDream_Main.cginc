@@ -253,6 +253,8 @@ sampler2D _MaskTex;
 
 #endif
 
+
+
 #include "UnityStandardConfig.cginc"
 #include "UnityStandardCore.cginc"
 #include "FunDream_UnityStandardBRDF.cginc"
@@ -354,7 +356,7 @@ inline half4 VertexGIForward_FunDream(VertexInput_FunDream v, float3 posWorld, h
     return ambientOrLightmapUV;
 }
 
-
+// todo
 VertexOutputForwardBase_FunDream vertForwardBase_FunDream (VertexInput_FunDream v)
 {
     UNITY_SETUP_INSTANCE_ID(v);
@@ -364,14 +366,25 @@ VertexOutputForwardBase_FunDream vertForwardBase_FunDream (VertexInput_FunDream 
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 #if _FUR
-	// 毛发偏移计算,添加mask,最初计算公式:https://xbdev.net/directx3dx/specialX/Fur/
-	o.uv.xy = TRANSFORM_TEX(v.texcoord, _FurColorTex);
-	o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);     
-    float4 mask = tex2Dlod(_MaskTex,float4(o.uv.xy,0,0));    
-  	half3 direction = lerp(v.normal, _Gravity * _GravityStrength + v.normal * (1 - _GravityStrength), FURSTEP);
-	float3 pos =  direction * _FurLength * FURSTEP;	
-	v.vertex.xyz += pos * mask.r;
+    half3 direction = lerp(v.normal, _Gravity * _GravityStrength + v.normal * (1 - _GravityStrength), FURSTEP);
+	v.vertex.xyz += direction * _FurLength * FURSTEP;
 #endif 
+
+// #if _FUR
+// 	// 毛发偏移计算,添加mask,最初计算公式:https://xbdev.net/directx3dx/specialX/Fur/
+// 	// o.uv.xy = TRANSFORM_TEX(v.texcoord, _FurColorTex);
+// 	// o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);     
+	
+// 	o.tex.xy = TRANSFORM_TEX(v.uv0, _MainTex); 	// MainTex和Mask共用UV0
+// 	o.tex.zw = TRANSFORM_TEX(v.uv1, _LayerTex);     
+	
+		
+//     float4 mask = tex2Dlod(_MaskTex,float4(o.tex.xy,0,0));    
+// 	half3 direction = lerp(v.normal, _Gravity * _GravityStrength + v.normal * (1 - _GravityStrength),FURSTEP);	  	
+// 	// half3 direction = lerp(v.normal, _Gravity.xyz * _GravityStrength + v.normal * (1 - _GravityStrength), half3(FURSTEP,FURSTEP,FURSTEP));
+// 	float3 pos =  direction * _FurLength * FURSTEP;	
+// 	v.vertex.xyz += pos * mask.r;
+// #endif 
 
     float4 posWorld = mul(unity_ObjectToWorld, v.vertex);
     #if UNITY_REQUIRE_FRAG_WORLDPOS
@@ -383,8 +396,8 @@ VertexOutputForwardBase_FunDream vertForwardBase_FunDream (VertexInput_FunDream 
             o.posWorld = posWorld.xyz;
         #endif
     #endif
-    o.pos = UnityObjectToClipPos(v.vertex);
-
+    // o.pos = UnityObjectToClipPos(float4(v.vertex.xyz,1.0));
+	o.pos = UnityObjectToClipPos(v.vertex);
 
     o.eyeVec.xyz = NormalizePerVertexNormal(posWorld.xyz - _WorldSpaceCameraPos);
     float3 normalWorld = UnityObjectToWorldNormal(v.normal);
@@ -965,10 +978,10 @@ FragmentData frag( half4 i_tex, half3 i_eyeVec, half3 i_viewDirForParallax, floa
 
 
 
-
+// todo
 half4 fragForwardBaseInternal_FunDream(VertexOutputForwardBase_FunDream i)
 {
-
+	// FRAGMENT_SETUP(s)
 	FragmentData s = frag(i.tex, i.eyeVec.xyz, IN_VIEWDIR4PARALLAX(i), i.tangentToWorldAndPackedData, IN_WORLDPOS(i), i.detailUV);
 
 	#if UNITY_OPTIMIZE_TEXCUBELOD
@@ -1013,26 +1026,36 @@ half4 fragForwardBaseInternal_FunDream(VertexOutputForwardBase_FunDream i)
 #else
 	half4 c = TCP2_BRDF_PBS(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect,
 			_RampThreshold, _RampSmooth, _HColor, _SColor, _SpecSmooth, _SpecBlend, fixed3(_RimMin, _RimMax, _RimStrength), atten, s.alpha);
-#endif
-
+#endif	
 	c.rgb += Emission(i.tex.xy);
 
 	UNITY_APPLY_FOG(i.fogCoord, c.rgb);
 
-#if _FUR // Only Change Alpha
+// #if _FUR // Only Change Alpha
+//     // fixed alpha = tex2D(_LayerTex, TRANSFORM_TEX(i.tex.xy, _LayerTex)).r;
+// 	// alpha = step(lerp(_CutoffStart, _CutoffEnd, FURSTEP), alpha);
+//     // c.a = 1 - FURSTEP*FURSTEP;
+// 	// c.a += dot(-s.eyeVec, s.normalWorld) - _EdgeFade;
+// 	// c.a = max(0, c.a);
+// 	// c.a *= alpha;
+// 	// fixed alpha = tex2D(_LayerTex, TRANSFORM_TEX(i.tex.zw*_FurThinness, _LayerTex)).r;	
+// 	fixed alpha = tex2D(_LayerTex, i.tex.zw * _FurThinness);
+// 	// fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+// 	alpha = clamp(alpha - _FurAlpha - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);  	
+// 	c.a = max(0, c.a);
+// 	c.a = alpha;    
+// #endif
+#if _FUR
     fixed alpha = tex2D(_LayerTex, TRANSFORM_TEX(i.tex.xy, _LayerTex)).r;
-	alpha = step(lerp(_CutoffStart, _CutoffEnd, FUR_OFFSET), alpha);
-    c.a = 1 - FUR_OFFSET*FUR_OFFSET;
+	alpha = step(lerp(_CutoffStart, _CutoffEnd, FURSTEP), alpha);	
+    c.a = 1 - FURSTEP*FURSTEP;
 	c.a += dot(-s.eyeVec, s.normalWorld) - _EdgeFade;
 	c.a = max(0, c.a);
 	c.a *= alpha;
+
     return c;
 #endif
-
-
-
 	return c;
-
 }
 
 

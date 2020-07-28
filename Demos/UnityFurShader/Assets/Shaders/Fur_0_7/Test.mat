@@ -8,9 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Test
-  m_Shader: {fileID: 4800000, guid: e313e9a059978534187b4904279cdc31, type: 3}
-  m_ShaderKeywords: TCP2_DISABLE_WRAPPED_LIGHT _LayerBaseUVSet_0 _LayerBase_Blend_Normal
-    _RIMOFFSET_OFF _UV2_OFF _UV3_OFF
+  m_Shader: {fileID: 4800000, guid: 39175c5b6cce0034eaef8a6022547fc7, type: 3}
+  m_ShaderKeywords: TCP2_DISABLE_WRAPPED_LIGHT TCP2_SPEC_TOON _ANISO _FUZZON_OFF _HAIR
+    _LACQUERON_OFF _LAYER_BASE_TEX _Layer2UVSet_0 _Layer2_Blend_Normal _Layer3UVSet_0
+    _Layer3_Blend_Normal _Layer4UVSet_0 _Layer4_Blend_Normal _Layer5UVSet_0 _Layer5_Blend_Normal
+    _Layer6UVSet_0 _Layer6_Blend_Normal _Layer7UVSet_0 _Layer7_Blend_Normal _LayerBaseUVSet_0
+    _LayerBase_Blend_Normal _LayerTopUVSet_0 _LayerTop_Blend_Normal _RIMOFFSET_OFF
+    _UV2_OFF _UV4_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -40,16 +44,80 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FuzzTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer2Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer2Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer3Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer3Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer4Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer4Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer5Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer5Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer6Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer6Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer7Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer7Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _LayerBaseNormal:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _LayerBaseTex:
+        m_Texture: {fileID: 2800000, guid: a3390bf69b5e44aefbaa8626b10f94cc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LayerTex:
+        m_Texture: {fileID: 2800000, guid: a97c2dea3887349428e92c762c7f1022, type: 3}
+        m_Scale: {x: 33, y: 33}
+        m_Offset: {x: 0.84, y: 0}
+    - _LayerTopNormal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LayerTopTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a3390bf69b5e44aefbaa8626b10f94cc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
@@ -57,6 +125,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -78,24 +150,77 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlphaScale: 1
-    - _Brightness: 1
-    - _BumpScale: 1
+    - _Brightness: 4.26
+    - _BumpScale: 0.46
     - _Culling: 2
-    - _Cutoff: 0.5
+    - _Cutoff: 0.193
+    - _CutoffEnd: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _GlossMapScale: 1
+    - _EdgeFade: 0.598
+    - _FabricScatterScale: 0
+    - _FurAlpha: 0.057
+    - _FurDensity: 1
+    - _FurLength: 0.085
+    - _FurThinness: 7.1
+    - _FuzzBias: 0
+    - _FuzzON: 0
+    - _FuzzRange: 1
+    - _Gloss: 1
+    - _GlossMapScale: 0.27
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Gradient: 0.5
+    - _GravityStrength: 0.464
+    - _LacquerON: 0
+    - _LacquerReflection: 0.5
+    - _LacquerSmoothness: 0.5
+    - _Layer2BlendMode: 0
+    - _Layer2Metallic: 0
+    - _Layer2NormalScale: 1
+    - _Layer2Smoothness: 0.3
+    - _Layer2UVSet: 0
+    - _Layer3BlendMode: 0
+    - _Layer3Metallic: 0
+    - _Layer3NormalScale: 1
+    - _Layer3Smoothness: 0.3
+    - _Layer3UVSet: 0
+    - _Layer4BlendMode: 0
+    - _Layer4Metallic: 0
+    - _Layer4NormalScale: 1
+    - _Layer4Smoothness: 0.3
+    - _Layer4UVSet: 0
+    - _Layer5BlendMode: 0
+    - _Layer5Metallic: 0
+    - _Layer5NormalScale: 1
+    - _Layer5Smoothness: 0.3
+    - _Layer5UVSet: 0
+    - _Layer6BlendMode: 0
+    - _Layer6Metallic: 0
+    - _Layer6NormalScale: 1
+    - _Layer6Smoothness: 0.3
+    - _Layer6UVSet: 0
+    - _Layer7BlendMode: 0
+    - _Layer7Metallic: 0
+    - _Layer7NormalScale: 1
+    - _Layer7Smoothness: 0.3
+    - _Layer7UVSet: 0
     - _LayerBaseBlendMode: 0
     - _LayerBaseMetallic: 0
     - _LayerBaseNormalScale: 1
     - _LayerBaseSmoothness: 0.3
     - _LayerBaseUVSet: 0
-    - _Metallic: 0
+    - _LayerTopBlendMode: 0
+    - _LayerTopMetallic: 0
+    - _LayerTopNormalScale: 1
+    - _LayerTopSmoothness: 0.3
+    - _LayerTopUVSet: 0
+    - _Metallic: 0.36
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _Offset: 0
+    - _Offset2: 0
+    - _Offset3: 0
     - _Parallax: 0.02
     - _RIM: 0
     - _RampSmooth: 0.2
@@ -109,25 +234,44 @@ Material:
     - _RimOffsetY: 0
     - _RimOffsetZ: 0
     - _RimStrength: 0.5
-    - _Rotation: 0
+    - _Rotation: 98
+    - _Smoothness2: 0.5
+    - _Smoothness3: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecBlend: 1
+    - _SpecNoise: 0
     - _SpecSmooth: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _TCP2_DISABLE_WRAPPED_LIGHT: 1
     - _TCP2_RAMPTEXT: 0
-    - _TCP2_SPEC_TOON: 0
-    - _Temp: 1
+    - _TCP2_SPEC_TOON: 1
+    - _Temp: 1.14
     - _Thickness: 0.5
     - _UV2: 0
-    - _UV3: 0
+    - _UV3: 1
     - _UVSec: 0
+    - _WrapDiffuse: 0
+    - _XCurve: 0
+    - _YCurve: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FabricScatterColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FuzzColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Gravity: {r: 0, g: 0, b: 0, a: 0}
     - _HColor: {r: 1, g: 1, b: 1, a: 1}
+    - _HairSpecCol: {r: 1, g: 1, b: 1, a: 1}
+    - _HairSpecCol2: {r: 1, g: 1, b: 1, a: 1}
+    - _HairSpecCol3: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer2Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer3Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer4Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer5Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer6Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer7Color: {r: 1, g: 1, b: 1, a: 1}
     - _LayerBaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _LayerTopColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+    - _SColor: {r: 1, g: 1, b: 1, a: 1}

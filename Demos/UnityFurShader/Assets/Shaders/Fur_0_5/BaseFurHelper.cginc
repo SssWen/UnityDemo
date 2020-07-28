@@ -2,6 +2,18 @@
 
 #include "Lighting.cginc"
 #include "UnityCG.cginc"
+#include "AutoLight.cginc"
+struct VertexInput {
+    float4 vertex : POSITION;
+    float3 normal : NORMAL;
+};
+struct VertexOutput {
+    float4 pos : SV_POSITION;
+    float4 posWorld : TEXCOORD0;
+    float3 normalDir : TEXCOORD1;
+    LIGHTING_COORDS(2,3)                
+};
+
 
 struct v2f
 {
@@ -10,6 +22,7 @@ struct v2f
     float3 worldNormal: TEXCOORD1;
     float3 worldPos: TEXCOORD2;
     float4 uv2: TEXCOORD3;
+    LIGHTING_COORDS(4,5)  
 };
 
 fixed4 _Color;
@@ -69,6 +82,7 @@ v2f vert_base(appdata_base v)
     float3 P = v.vertex.xyz;
     float3 add1 = v.normal * _FurLength * FURSTEP; 
     float3 add2 = clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+    
     // add2 = 0;
     // add mask calculate. 
     o.uv2.xy = TRANSFORM_TEX(v.texcoord, _MaskTex);
@@ -92,23 +106,7 @@ v2f vert_base(appdata_base v)
     return o;
 }
 
-fixed4 frag_surface(v2f i): SV_Target
-{
-    
-    fixed3 worldNormal = normalize(i.worldNormal);
-    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
-    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
-    fixed3 worldHalf = normalize(worldView + worldLight);
-    
-    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
-    fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
-    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
-    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
 
-    fixed3 color = ambient + diffuse + specular;
-    
-    return fixed4(color, 1.0);
-}
 
 fixed4 frag_base(v2f i): SV_Target
 {
@@ -130,12 +128,86 @@ fixed4 frag_base(v2f i): SV_Target
     fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
     fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
     fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
-
-   
-    
     
     fixed3 color = ambient + diffuse + specular;
     fixed alpha = clamp(noise - _FurAlpha- (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
     
     return fixed4(color, alpha);
 }
+
+fixed4 frag_surface(v2f i): SV_Target
+{	
+
+    fixed3 worldNormal = normalize(i.worldNormal);    
+    fixed3 worldLight = normalize(UnityWorldSpaceLightDir(i.worldPos));    
+    fixed3 worldView = normalize(UnityWorldSpaceViewDir(i.worldPos));
+    fixed3 worldHalf = normalize(worldView + worldLight);
+    
+    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+    fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
+    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+
+    fixed3 color = ambient + diffuse + specular;
+    
+    return fixed4(color, 1.0);
+}
+
+v2f vert_add(appdata_base v)
+{
+    v2f o;
+    o.pos = UnityObjectToClipPos(v.vertex);
+    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+    return o;
+}
+
+fixed4 frag_add(v2f i): Color
+{
+    
+    fixed3 worldNormal = normalize(i.worldNormal);    
+    fixed3 worldLight = normalize(UnityWorldSpaceLightDir(i.worldPos));    
+    fixed3 worldView = normalize(UnityWorldSpaceViewDir(i.worldPos));
+    fixed3 worldHalf = normalize(worldView + worldLight);
+    
+    float attenuation = LIGHT_ATTENUATION(i);
+    fixed3 albedo =  _Color;
+    
+    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+
+    // fixed3 color = (diffuse + specular)*attenuation;
+    fixed3 color = (1,1,0)*0.5;
+    return fixed4(color, 1.0);
+}
+
+VertexOutput vert(VertexInput v) {
+    VertexOutput o = (VertexOutput)0;
+    o.normalDir = UnityObjectToWorldNormal(v.normal);
+
+    float3 P = v.vertex.xyz;
+    float3 add1 = v.normal * _FurLength * FURSTEP; 
+    float3 add2 = clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+    
+    v.vertex.xyz = P + add1 +add2;
+
+    o.posWorld = mul(unity_ObjectToWorld, v.vertex);                
+    o.pos = UnityObjectToClipPos( v.vertex );
+                    
+    return o;
+}
+float4 frag(VertexOutput i) : COLOR {
+    i.normalDir = normalize(i.normalDir);
+    float3 normalDirection = i.normalDir;
+    float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));                
+
+    float attenuation = LIGHT_ATTENUATION(i);
+    float3 attenColor = attenuation * _LightColor0.xyz;
+
+    float NdotL = max(0.0,dot( normalDirection, lightDirection ));
+    float3 directDiffuse = max( 0.0, NdotL) * attenColor;                
+                                                    
+    return fixed4(directDiffuse * _Color.rgb ,0); 
+}
+

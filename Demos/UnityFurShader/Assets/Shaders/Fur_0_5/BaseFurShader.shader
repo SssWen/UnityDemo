@@ -62,11 +62,11 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.05
-                #include "BaseFurHelper.cginc"
-                
+                #include "BaseFurHelper.cginc"                
                 ENDCG
                 
             }
+            
             
             Pass
             {
@@ -181,139 +181,271 @@
                 #define FURSTEP 0.50
                 #include "BaseFurHelper.cginc"
                 
-                ENDCG
-                
+                ENDCG                
             }
-            
+
+
+    
             // Pass
-            // {
-            //     CGPROGRAM
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
                 
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.55
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.05 
             //     #include "BaseFurHelper.cginc"
-                
+            //     #pragma vertex vert
+            //     #pragma fragment frag
             //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.60
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.65
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.70
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.75
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.80
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.85
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.90
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
-            // }
-            
-            // Pass
-            // {
-            //     CGPROGRAM
-                
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 0.95
-            //     #include "BaseFurHelper.cginc"
-                
-            //     ENDCG
-                
             // }
 
-            // Pass
-            // {
-            //     CGPROGRAM
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
                 
-            //     #pragma vertex vert_base
-            //     #pragma fragment frag_base
-            //     #define FURSTEP 1.00
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.10 
             //     #include "BaseFurHelper.cginc"
-                
+            //     #pragma vertex vert
+            //     #pragma fragment frag
             //     ENDCG
-                
             // }
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.15
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.20 
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.25
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.30
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.35 
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.4
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.45
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+            //  Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+         
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.5
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
+
+           
+            
+            
         }
     }
+     FallBack "Diffuse"
 }
+
+
+//             Pass {
+//             Name "FORWARD_DELTA"
+//             Tags {
+//                 "LightMode"="ForwardAdd"
+//             }
+//             Blend One One            
+            
+//             CGPROGRAM
+//             #pragma vertex vert
+//             #pragma fragment frag            
+//             #include "UnityCG.cginc"
+//             #include "AutoLight.cginc"            
+//             #pragma target 3.0
+//             uniform float4 _LightColor0;
+//             uniform float4 _Color;
+//             struct VertexInput {
+//                 float4 vertex : POSITION;
+//                 float3 normal : NORMAL;
+//             };
+//             struct VertexOutput {
+//                 float4 pos : SV_POSITION;
+//                 float4 posWorld : TEXCOORD0;
+//                 float3 normalDir : TEXCOORD1;
+//                 LIGHTING_COORDS(2,3)                
+//             };
+//             VertexOutput vert (VertexInput v) {
+//                 VertexOutput o = (VertexOutput)0;
+//                 o.normalDir = UnityObjectToWorldNormal(v.normal);
+//                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+//                 float3 lightColor = _LightColor0.rgb;
+//                 o.pos = UnityObjectToClipPos( v.vertex );
+                                
+//                 return o;
+//             }
+//             float4 frag(VertexOutput i) : COLOR {
+//                 i.normalDir = normalize(i.normalDir);
+//                 float3 normalDirection = i.normalDir;
+//                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
+//                 float3 lightColor = _LightColor0.rgb;
+// ////// Lighting:
+//                 float attenuation = LIGHT_ATTENUATION(i);
+//                 float3 attenColor = attenuation * _LightColor0.xyz;
+// /////// Diffuse:
+//                 float NdotL = max(0.0,dot( normalDirection, lightDirection ));
+//                 float3 directDiffuse = max( 0.0, NdotL) * attenColor;
+//                 float3 diffuseColor = _Color.rgb;
+//                 float3 diffuse = directDiffuse * diffuseColor;
+// /// Final Color:
+//                 float3 finalColor = diffuse;
+//                 fixed4 finalRGBA = fixed4(finalColor * 1,0);
+                
+//                 return finalRGBA;
+//             }
+//             ENDCG
+//         }
+
+
+//  Pass
+//             {  
+//                 Tags {
+//                     "LightMode"="ForwardAdd"
+//                 }
+//                 Blend One One            
+                
+//                 CGPROGRAM          
+//                 #include "UnityCG.cginc"
+//                 #include "AutoLight.cginc"            
+//                 #pragma target 3.0
+//                 #define FURSTEP 0.00 
+//                 #include "BaseFurHelper.cginc"
+//                 #pragma vertex vert
+//                 #pragma fragment frag
+//                 ENDCG
+//             }

@@ -60,6 +60,7 @@ inline half3 StylizedFresnel(half nl, half roughness, UnityLight light, half3 no
 //  b) GGX
 // * Smith for Visiblity term
 // * Schlick approximation for Fresnel
+// 在Unity的基础上，修改了阴影的计算
 half4 BRDF1_TCP2_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivity, half smoothness,
 	half3 normal, half3 viewDir,
 	UnityLight light, UnityIndirect gi,
@@ -151,14 +152,16 @@ half4 BRDF1_TCP2_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivit
 
 	// To provide true Lambert lighting, we need to be able to kill specular completely.
 	specularTerm *= any(specColor) ? 1.0 : 0.0;
-	
-	//TCP2 Colored Highlight/Shadows
+		
+	// TCP2 Colored Highlight/Shadows
 	shadowColor = lerp(highlightColor, shadowColor, shadowColor.a);	//Shadows intensity through alpha
-	diffuseTerm *= atten;
+	diffuseTerm *= atten; 
+	// 对原始diffuseTerm重新进行插值计算替换成新的diffuseTermRGB
 	half3 diffuseTermRGB = lerp(shadowColor.rgb, highlightColor.rgb, diffuseTerm);
 	half3 diffuseTCP2 = diffColor * (gi.diffuse + light.color * diffuseTermRGB);
 	//original: diffColor * (gi.diffuse + light.color * diffuseTerm)
 	
+	// 对specularTerm添加了一个atten和alpha控制
 	//TCP2: atten contribution to specular since it was removed from light calculation
 	specularTerm *= atten;
 

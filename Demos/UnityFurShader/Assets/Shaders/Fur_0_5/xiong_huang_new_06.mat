@@ -7,11 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: TCP2_DISABLE_WRAPPED_LIGHT TCP2_SPEC_TOON _EMISSION _LayerBaseUVSet_0
-    _LayerBase_Blend_Normal _RIMOFFSET_OFF _UV2_OFF _UV3_OFF
-  m_LightmapFlags: 0
+  m_Name: xiong_huang_new_06
+  m_Shader: {fileID: 4800000, guid: 39ab10d6b47cc4843bc85a9490ef71f3, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -40,20 +39,24 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _LayerBaseNormal:
-        m_Texture: {fileID: 0}
+    - _FurColorTex:
+        m_Texture: {fileID: 2800000, guid: a3390bf69b5e44aefbaa8626b10f94cc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _LayerBaseTex:
-        m_Texture: {fileID: 0}
+    - _FurTex:
+        m_Texture: {fileID: 2800000, guid: 089fbe127798c294d8ce481b375bdbdf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MaskTex:
+    - _Mask:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 2800000, guid: 089fbe127798c294d8ce481b375bdbdf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -68,66 +71,51 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Ramp:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ReflectionMap:
-        m_Texture: {fileID: 0}
+    - _ReflectionCube:
+        m_Texture: {fileID: 8900000, guid: 81b555ad570142040a13a3dc45012cbf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _AlphaScale: 1
-    - _Brightness: 1.27
+    - _Blur: 0
     - _BumpScale: 1
-    - _Culling: 2
+    - _CutOff: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _Diffuse: 1
     - _DstBlend: 0
+    - _EdgeFade: 0.66
+    - _FurAlpha: 0.099
+    - _FurDensity: 1.96
+    - _FurDensityT: 0
+    - _FurHardness: 1
+    - _FurLength: 0.06
+    - _FurLength_in: 0.65
+    - _FurShading: 0.84
+    - _FurThinness: 6.9
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Gradient: 0.5
-    - _LayerBaseBlendMode: 0
-    - _LayerBaseMetallic: 0
-    - _LayerBaseNormalScale: 1
-    - _LayerBaseSmoothness: 0.3
-    - _LayerBaseUVSet: 0
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RIM: 0
-    - _RampSmooth: 0.2
-    - _RampSmoothAdd: 0.75
-    - _RampThreshold: 0.5
-    - _Real_Fresnel: 0
-    - _RimMax: 0.7
-    - _RimMin: 0.6
-    - _RimOffset: 0
-    - _RimOffsetX: 0
-    - _RimOffsetY: 0
-    - _RimOffsetZ: 0
-    - _RimStrength: 0.5
-    - _Rotation: 53
+    - _Reflection: 0
+    - _RimPower: 0.83
+    - _Shininess: 0.01
     - _SmoothnessTextureChannel: 0
-    - _SpecBlend: 1
-    - _SpecSmooth: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TCP2_DISABLE_WRAPPED_LIGHT: 1
-    - _TCP2_RAMPTEXT: 0
-    - _TCP2_SPEC_TOON: 1
-    - _Temp: 1
-    - _Thickness: 0.5
-    - _UV2: 0
-    - _UV3: 0
+    - _Thickness: 0
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HColor: {r: 1, g: 1, b: 1, a: 1}
-    - _LayerBaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+    - _ForceGlobal: {r: 0, g: 0, b: 0, a: 0}
+    - _ForceLocal: {r: 0, g: -0, b: 0, a: 0}
+    - _FurColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FurColor2: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 1, g: 0.9292453, b: 0.9636665, a: 1}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Specular: {r: 0.14236861, g: 0.11076006, b: 0.1792453, a: 1}
+    - _VertexOffset: {r: 1, g: 0, b: 0, a: 1}
