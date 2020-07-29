@@ -6,14 +6,13 @@
         _Specular ("Specular", Color) = (1, 1, 1, 1)
         _Shininess ("Shininess", Range(0.01, 256.0)) = 8.0
         
-        _MainTex ("BaseTexture[毛皮]", 2D) = "white" { }
+        _MainTex ("MainTex[毛皮]", 2D) = "white" { }
         _Color ("BaseColor[毛皮]", Color) = (1, 1, 1, 1)
-        _MaskTex ("Mask", 2D) = "white" { }
-        _FurColorTex ("FurColorTex[毛发]", 2D) = "white" { }
+        _MaskTex ("Mask", 2D) = "white" { }        
         _FurColor ("FurColor[毛发]", Color) = (1, 1, 1, 1)
         _FurColor2 ("FurColor2[毛发]", Color) = (1, 1, 1, 1)
-        
-        _FurTex ("Fur Pattern", 2D) = "white" { }
+                
+        _LayerTex ("FurLayter", 2D) = "white" { }
         
         _FurLength ("Fur Length", Range(0.0, 1)) = 0.5
 
@@ -67,7 +66,23 @@
                 
             }
             
-            
+            // Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     Blend One One            
+                
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.05 
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert
+            //     #pragma fragment frag
+            //     ENDCG
+            // }
             Pass
             {
                 CGPROGRAM
@@ -81,108 +96,108 @@
                 
             }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.15
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.15
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG
+            //     ENDCG
                 
-            }
+            // }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.20
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.20
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG
+            //     ENDCG
                 
-            }
+            // }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.25
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.25
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG
+            //     ENDCG
                 
-            }
+            // }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.30
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.30
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG
+            //     ENDCG
                 
-            }
+            // }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.35
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.35
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG
+            //     ENDCG
                 
-            }
+            // }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.40
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.40
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG
+            //     ENDCG
                 
-            }
+            // }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.45
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.45
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG
+            //     ENDCG
                 
-            }
+            // }
             
-            Pass
-            {
-                CGPROGRAM
+            // Pass
+            // {
+            //     CGPROGRAM
                 
-                #pragma vertex vert_base
-                #pragma fragment frag_base
-                #define FURSTEP 0.50
-                #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_base
+            //     #pragma fragment frag_base
+            //     #define FURSTEP 0.50
+            //     #include "BaseFurHelper.cginc"
                 
-                ENDCG                
-            }
+            //     ENDCG                
+            // }
 
 
     

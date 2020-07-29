@@ -21,8 +21,7 @@ struct v2f
     half4 uv: TEXCOORD0;
     float3 worldNormal: TEXCOORD1;
     float3 worldPos: TEXCOORD2;
-    float4 uv2: TEXCOORD3;
-    LIGHTING_COORDS(4,5)  
+    LIGHTING_COORDS(3,4)  
 };
 
 fixed4 _Color;
@@ -38,14 +37,11 @@ half4 _MainTex_ST;
 sampler2D _MaskTex;
 half4 _MaskTex_ST;
 
-// 毛发颜色
-sampler2D _FurColorTex;
-half4 _FurColorTex_ST;
 fixed4 _FurColor;
 fixed4 _FurColor2;
 
-sampler2D _FurTex;
-half4 _FurTex_ST;
+sampler2D _LayerTex;
+half4 _LayerTex_ST;
 
 fixed _FurLength;
 fixed _FurAlpha;
@@ -77,30 +73,20 @@ v2f vert_surface(appdata_base v)
 v2f vert_base(appdata_base v)
 {
     v2f o;
-    // float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
-    // P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+
     float3 P = v.vertex.xyz;
     float3 add1 = v.normal * _FurLength * FURSTEP; 
     float3 add2 = clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
     
-    // add2 = 0;
     // add mask calculate. 
-    o.uv2.xy = TRANSFORM_TEX(v.texcoord, _MaskTex);
-    o.uv2.zw = TRANSFORM_TEX(v.texcoord, _FurColorTex); 
-
-    float4 mask = tex2Dlod(_MaskTex,float4(o.uv2.xy,0,0));    
-    P = P + (add1 + add2) * mask.r;
-    // P = P + (add1 + add2);
-    
+    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex); // mask mainTex共用uv
+    o.uv.zw = TRANSFORM_TEX(v.texcoord, _LayerTex); // 单独用uv   
+    float4 mask = tex2Dlod(_MaskTex,float4(o.uv.xy,0,0));    
+    P = P + (add1 + add2) * mask.r;    
     o.worldNormal = UnityObjectToWorldNormal(v.normal);
-    // float3 posY = v.normal*_FurDensityT*saturate(v.normal.y);
-    // P = P + posY;
     o.pos = UnityObjectToClipPos(float4(P, 1.0));
     
-    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
-    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
-
-    
+  
     o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 
     return o;
@@ -116,12 +102,13 @@ fixed4 frag_base(v2f i): SV_Target
     fixed3 worldHalf = normalize(worldView + worldLight);
 
     // fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
-    fixed3 albedo = tex2D(_FurColorTex, i.uv2.zw).rgb * _FurColor;
+    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _FurColor;
+    // fixed3 albedo =  _FurColor.xyz;
     albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
     half rim = 1.0 - saturate(dot(worldView, worldNormal));
     albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
     
-    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+    fixed3 noise = tex2D(_LayerTex, i.uv.zw * _FurThinness).rgb;
     fixed3 noiseColor = _FurColor2*noise;
     albedo = lerp(albedo,albedo*noiseColor,noise.r);
 
@@ -153,34 +140,7 @@ fixed4 frag_surface(v2f i): SV_Target
     return fixed4(color, 1.0);
 }
 
-v2f vert_add(appdata_base v)
-{
-    v2f o;
-    o.pos = UnityObjectToClipPos(v.vertex);
-    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
-    o.worldNormal = UnityObjectToWorldNormal(v.normal);
-    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-    return o;
-}
 
-fixed4 frag_add(v2f i): Color
-{
-    
-    fixed3 worldNormal = normalize(i.worldNormal);    
-    fixed3 worldLight = normalize(UnityWorldSpaceLightDir(i.worldPos));    
-    fixed3 worldView = normalize(UnityWorldSpaceViewDir(i.worldPos));
-    fixed3 worldHalf = normalize(worldView + worldLight);
-    
-    float attenuation = LIGHT_ATTENUATION(i);
-    fixed3 albedo =  _Color;
-    
-    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
-    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
-
-    // fixed3 color = (diffuse + specular)*attenuation;
-    fixed3 color = (1,1,0)*0.5;
-    return fixed4(color, 1.0);
-}
 
 VertexOutput vert(VertexInput v) {
     VertexOutput o = (VertexOutput)0;
@@ -211,3 +171,31 @@ float4 frag(VertexOutput i) : COLOR {
     return fixed4(directDiffuse * _Color.rgb ,0); 
 }
 
+// v2f vert_add(appdata_base v)
+// {
+//     v2f o;
+//     o.pos = UnityObjectToClipPos(v.vertex);
+//     o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+//     o.worldNormal = UnityObjectToWorldNormal(v.normal);
+//     o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+//     return o;
+// }
+
+// fixed4 frag_add(v2f i): Color
+// {
+    
+//     fixed3 worldNormal = normalize(i.worldNormal);    
+//     fixed3 worldLight = normalize(UnityWorldSpaceLightDir(i.worldPos));    
+//     fixed3 worldView = normalize(UnityWorldSpaceViewDir(i.worldPos));
+//     fixed3 worldHalf = normalize(worldView + worldLight);
+    
+//     float attenuation = LIGHT_ATTENUATION(i);
+//     fixed3 albedo =  _Color;
+    
+//     fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+//     fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+
+//     // fixed3 color = (diffuse + specular)*attenuation;
+//     fixed3 color = (1,1,0)*0.5;
+//     return fixed4(color, 1.0);
+// }
