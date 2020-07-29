@@ -49,6 +49,7 @@ fixed _GravityStrength;
 fixed4 _RimColor;
 half _RimPower;
 
+
 v2f vert_surface(appdata_base v)
 {
     v2f o;

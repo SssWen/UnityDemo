@@ -1,4 +1,4 @@
-﻿Shader "Fur/Fur_Shader"
+﻿Shader "Custom/Fur_Shader"
 {
     Properties
     {
@@ -36,7 +36,7 @@
     Category
     {
 
-        Tags { "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Transparent" }
+        Tags { "LightMode"="ForwardBase" "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Transparent" }
         Cull Off
         ZWrite On
         Blend SrcAlpha OneMinusSrcAlpha
@@ -45,6 +45,7 @@
         {
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_surface
