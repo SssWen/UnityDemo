@@ -1,4 +1,4 @@
-﻿Shader "Fur/BaseFurShader_6"
+﻿Shader "Fur/Fur_Shader"
 {
     Properties
     {
@@ -50,7 +50,7 @@
                 #pragma vertex vert_surface
                 #pragma fragment frag_surface
                 #define FURSTEP 0.00
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -63,7 +63,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.05
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -76,7 +76,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.10
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -89,7 +89,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.15
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -102,7 +102,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.20
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -115,7 +115,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.25
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -128,7 +128,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.30
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -141,7 +141,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.35
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -154,7 +154,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.40
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -167,7 +167,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.45
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -180,7 +180,7 @@
                 #pragma vertex vert_base
                 #pragma fragment frag_base
                 #define FURSTEP 0.50
-                #include "BaseFurHelper_6.cginc"
+                #include "Fur_Helper.cginc"
                 
                 ENDCG
                 
@@ -193,7 +193,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.55
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -206,7 +206,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.60
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -219,7 +219,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.65
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -232,7 +232,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.70
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -245,7 +245,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.75
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -258,7 +258,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.80
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -271,7 +271,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.85
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -284,7 +284,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.90
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -297,7 +297,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 0.95
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 
@@ -310,7 +310,7 @@
             //     #pragma vertex vert_base
             //     #pragma fragment frag_base
             //     #define FURSTEP 1.00
-            //     #include "BaseFurHelper_6.cginc"
+            //     #include "Fur_Helper.cginc"
                 
             //     ENDCG
                 

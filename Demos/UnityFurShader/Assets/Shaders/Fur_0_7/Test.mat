@@ -150,28 +150,28 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlphaScale: 1
-    - _Brightness: 4.26
+    - _Brightness: 1.9
     - _BumpScale: 0.46
     - _Culling: 2
-    - _Cutoff: 0.193
+    - _Cutoff: 0.32
     - _CutoffEnd: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeFade: 0.598
-    - _FabricScatterScale: 0
+    - _EdgeFade: 1
+    - _FabricScatterScale: 0.43
     - _FurAlpha: 0.057
     - _FurDensity: 1
-    - _FurLength: 0.085
+    - _FurLength: 0.09
     - _FurThinness: 7.1
     - _FuzzBias: 0
     - _FuzzON: 0
     - _FuzzRange: 1
     - _Gloss: 1
-    - _GlossMapScale: 0.27
+    - _GlossMapScale: 0.53
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Gradient: 0.5
-    - _GravityStrength: 0.464
+    - _GravityStrength: 0.59
     - _LacquerON: 0
     - _LacquerReflection: 0.5
     - _LacquerSmoothness: 0.5
@@ -215,7 +215,7 @@ Material:
     - _LayerTopNormalScale: 1
     - _LayerTopSmoothness: 0.3
     - _LayerTopUVSet: 0
-    - _Metallic: 0.36
+    - _Metallic: 1.44
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Offset: 0
@@ -246,7 +246,7 @@ Material:
     - _TCP2_DISABLE_WRAPPED_LIGHT: 1
     - _TCP2_RAMPTEXT: 0
     - _TCP2_SPEC_TOON: 1
-    - _Temp: 1.14
+    - _Temp: 1.1
     - _Thickness: 0.5
     - _UV2: 0
     - _UV3: 1
@@ -260,7 +260,7 @@ Material:
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _FabricScatterColor: {r: 1, g: 1, b: 1, a: 1}
     - _FuzzColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Gravity: {r: 0, g: 0, b: 0, a: 0}
+    - _Gravity: {r: 0, g: -1, b: 0, a: 0}
     - _HColor: {r: 1, g: 1, b: 1, a: 1}
     - _HairSpecCol: {r: 1, g: 1, b: 1, a: 1}
     - _HairSpecCol2: {r: 1, g: 1, b: 1, a: 1}
