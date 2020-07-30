@@ -46,6 +46,8 @@
         {
             Pass
             {
+
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_surface
@@ -59,6 +61,7 @@
 
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -89,6 +92,7 @@
 
              Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -101,6 +105,7 @@
            
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -112,6 +117,7 @@
             }
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -124,6 +130,7 @@
           
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -133,9 +140,27 @@
                 ENDCG
                 
             }
+             Pass
+            {  
+                Tags {
+                    "LightMode"="ForwardAdd"
+                }
+                // Blend  OneMinusSrcColor  One                                                                  
+                Blend One One                                                                    
+                CGPROGRAM          
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"            
+                #pragma target 3.0
+                #define FURSTEP 0.25
+                #include "BaseFurHelper.cginc"
+                #pragma vertex vert_add
+                #pragma fragment frag_add
+                ENDCG
+            }
 
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -145,8 +170,26 @@
                 ENDCG
                 
             }
+             Pass
+            {  
+                Tags {
+                    "LightMode"="ForwardAdd"
+                }
+                // Blend  OneMinusSrcColor  One                                                                  
+                Blend One One                                                                    
+                CGPROGRAM          
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"            
+                #pragma target 3.0
+                #define FURSTEP 0.3
+                #include "BaseFurHelper.cginc"
+                #pragma vertex vert_add
+                #pragma fragment frag_add
+                ENDCG
+            }
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -156,8 +199,26 @@
                 ENDCG
                 
             }
+             Pass
+            {  
+                Tags {
+                    "LightMode"="ForwardAdd"
+                }
+                // Blend  OneMinusSrcColor  One                                                                  
+                Blend One One                                                                    
+                CGPROGRAM          
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"            
+                #pragma target 3.0
+                #define FURSTEP 0.35
+                #include "BaseFurHelper.cginc"
+                #pragma vertex vert_add
+                #pragma fragment frag_add
+                ENDCG
+            }
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -167,8 +228,26 @@
                 ENDCG
                 
             }
+             Pass
+            {  
+                Tags {
+                    "LightMode"="ForwardAdd"
+                }
+                // Blend  OneMinusSrcColor  One                                                                  
+                Blend One One                                                                    
+                CGPROGRAM          
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"            
+                #pragma target 3.0
+                #define FURSTEP 0.4
+                #include "BaseFurHelper.cginc"
+                #pragma vertex vert_add
+                #pragma fragment frag_add
+                ENDCG
+            }
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -178,8 +257,26 @@
                 ENDCG
                 
             }
+             Pass
+            {  
+                Tags {
+                    "LightMode"="ForwardAdd"
+                }
+                // Blend  OneMinusSrcColor  One                                                                  
+                Blend One One                                                                    
+                CGPROGRAM          
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"            
+                #pragma target 3.0
+                #define FURSTEP 0.45
+                #include "BaseFurHelper.cginc"
+                #pragma vertex vert_add
+                #pragma fragment frag_add
+                ENDCG
+            }
             Pass
             {
+                Tags {"LightMode"="ForwardBase"}
                 CGPROGRAM
                 
                 #pragma vertex vert_base
@@ -189,9 +286,41 @@
                 ENDCG
                 
             }
-
-  
-     
+             Pass
+            {  
+                Tags {
+                    "LightMode"="ForwardAdd"
+                }
+                // Blend  OneMinusSrcColor  One                                                                  
+                Blend One One                                                                    
+                CGPROGRAM          
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"            
+                #pragma target 3.0
+                #define FURSTEP 0.5
+                #include "BaseFurHelper.cginc"
+                #pragma vertex vert_add
+                #pragma fragment frag_add
+                ENDCG
+            }
+           
+            // Pass
+            // {  
+            //     Tags {
+            //         "LightMode"="ForwardAdd"
+            //     }
+            //     // Blend  OneMinusSrcColor  One                                                                  
+            //     Blend One One                                                                    
+            //     CGPROGRAM          
+            //     #include "UnityCG.cginc"
+            //     #include "AutoLight.cginc"            
+            //     #pragma target 3.0
+            //     #define FURSTEP 0.3
+            //     #include "BaseFurHelper.cginc"
+            //     #pragma vertex vert_add
+            //     #pragma fragment frag_add
+            //     ENDCG
+            // }
    
             // Pass
             // {  
@@ -204,7 +333,7 @@
             //     #include "UnityCG.cginc"
             //     #include "AutoLight.cginc"            
             //     #pragma target 3.0
-            //     #define FURSTEP 0.45
+            //     #define FURSTEP 0.35
             //     #include "BaseFurHelper.cginc"
             //     #pragma vertex vert_add
             //     #pragma fragment frag_add

@@ -36,7 +36,7 @@ Shader "Shader Forge/NewShader" {
                 float4 pos : SV_POSITION;
                 float4 posWorld : TEXCOORD0;
                 float3 normalDir : TEXCOORD1;
-                LIGHTING_COORDS(2,3)
+                // LIGHTING_COORDS(2,3)
                 
             };
             VertexOutput vert (VertexInput v) {

@@ -199,4 +199,5 @@ float4 frag_add(v2f i) : SV_Target {
     fixed alpha = clamp(noise - _FurAlpha- (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
     
     return fixed4(color*alpha, 0);
+    // return fixed4(1,0,0, 0);
 }

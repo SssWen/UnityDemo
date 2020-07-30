@@ -1,0 +1,3 @@
+[submodule "Demos/AnisotropicHair"]
+	path = Demos/AnisotropicHair
+	url = https://github.com/ak-TechArtist/AnisotropicHair.git
