@@ -78,6 +78,8 @@ inline half4 Pow5 (half4 x)
     return x*x * x*x * x;
 }
 
+// F 函数 @wen
+// 使用近似的计算 F0 = n*v = 法线与视线 = cosA  Unity使用的是光方向 dot (光+视)/2 saturate(dot(light.dir, halfDir));
 inline half3 FresnelTerm (half3 F0, half cosA)
 {
     half t = Pow5 (1 - cosA);   // ala Schlick interpoliation
@@ -126,6 +128,9 @@ inline half SmithBeckmannVisibilityTerm (half NdotL, half NdotV, half roughness)
     return SmithVisibilityTerm (NdotL, NdotV, k) * 0.25f; // * 0.25 is the 1/4 of the visibility term
 }
 
+// @wen
+// G几何遮挡函数,简化平方根，不是数学上正确，但是基本接近
+// 很像https://learnopengl-cn.github.io/07%20PBR/01%20Theory/的几何函数
 // Ref: http://jcgt.org/published/0003/02/03/paper.pdf
 inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughness)
 {
@@ -142,7 +147,8 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
     half lambdaV    = NdotL * sqrt((-NdotV * a2 + NdotV) * NdotV + a2);
     half lambdaL    = NdotV * sqrt((-NdotL * a2 + NdotL) * NdotL + a2);
 
-    // Simplify visibility term: (2.0f * NdotL * NdotV) /  ((4.0f * NdotL * NdotV) * (lambda_v + lambda_l + 1e-5f));
+    // Simplify visibility term: 
+    // (2.0f * NdotL * NdotV) /  ((4.0f * NdotL * NdotV) * (lambda_v + lambda_l + 1e-5f));
     return 0.5f / (lambdaV + lambdaL + 1e-5f);  // This function is not intended to be running on Mobile,
                                                 // therefore epsilon is smaller than can be represented by half
 #else
@@ -160,6 +166,10 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
 #endif
 }
 
+// @wen
+// 法线 正态分布函数 distribution
+// Unity 的法线分布函数使用的是Trowbridge-Reitz GGX正态分布函数,https://learnopengl-cn.github.io/07%20PBR/01%20Theory/ 
+// 在粗糙度的影响下，还有多少比例法线可以反射到视角方向
 inline float GGXTerm (float NdotH, float roughness)
 {
     float a2 = roughness * roughness;
@@ -277,14 +287,18 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
 #if UNITY_BRDF_GGX
     // GGX with roughtness to 0 would mean no specular at all, using max(roughness, 0.002) here to match HDrenderloop roughtness remapping.
     roughness = max(roughness, 0.002);
-    float V = SmithJointGGXVisibilityTerm (nl, nv, roughness);
-    float D = GGXTerm (nh, roughness);
+    float V = SmithJointGGXVisibilityTerm (nl, nv, roughness); // 几何函数G - Geometry，其实要说是V函数，view可看见的光线，排除被遮挡和阴影部分
+    float D = GGXTerm (nh, roughness); // 法线正态分布函数D - Distribution
 #else
     // Legacy
     half V = SmithBeckmannVisibilityTerm (nl, nv, roughness);
     half D = NDFBlinnPhongNormalizedTerm (nh, PerceptualRoughnessToSpecPower(perceptualRoughness));
 #endif
 
+    // FresnelTerm系数在这里计算FresnelTerm
+    // FresnelTerm()
+
+    // 这里只是specular系数
     float specularTerm = V*D * UNITY_PI; // Torrance-Sparrow model, Fresnel is applied later
 
 #   ifdef UNITY_COLORSPACE_GAMMA
@@ -309,10 +323,15 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     specularTerm *= any(specColor) ? 1.0 : 0.0;
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
+    // gi 为间接光源，light为直接光源
+    // color = 漫反射 + 镜面反射
+    // color = diffColor(间接光源漫反射+直接光源漫反射【灯光颜色】*diffuse系数) + DGF*直接光源颜色【灯光颜色】 +
+    // 表面衰减系数*间接光源镜面反射*菲尼尔插值 ？？？？
     half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm)
-                    + specularTerm * light.color * FresnelTerm (specColor, lh)
+                    + specularTerm * light.color * FresnelTerm (specColor, lh) 
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv);
-
+    // 最后一个surfaceReduction 
+    // https://zhuanlan.zhihu.com/p/68025039
     return half4(color, 1);
 }
 
