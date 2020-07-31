@@ -28,11 +28,12 @@
                 shadow = _LightShadowData.r + shadow * (1-_LightShadowData.r);
                 return shadow;
             #else
+                // dist 为shadowMap 存储的距离光源距离。
                 unityShadowCoord dist = SAMPLE_DEPTH_TEXTURE(_ShadowMapTexture, shadowCoord.xy);
                 // tegra is confused if we use _LightShadowData.x directly
                 // with "ambiguous overloaded function reference max(mediump float, float)"
                 unityShadowCoord lightShadowDataX = _LightShadowData.x;
-                unityShadowCoord threshold = shadowCoord.z;
+                unityShadowCoord threshold = shadowCoord.z; // 当前距离光源距离
                 return max(dist > threshold, lightShadowDataX);
             #endif
         }
@@ -49,7 +50,11 @@
     #endif
 
     #define SHADOW_COORDS(idx1) unityShadowCoord4 _ShadowCoord : TEXCOORD##idx1;
-    #define SHADOW_ATTENUATION(a) unitySampleShadow(a._ShadowCoord)
+    // vert中 SHADOW_COORDS 计算好的坐标，
+    // frag中 SHADOW_ATTENUATION 计算atten,根据当前片段距离光源的距离，与该片段采样shadowmap的值进行比较，判断depth
+
+    // _ShadowCoord是在光源空间下坐标，然后去采样光源空间生产的深度值，进行比较，也就是大部分返回0，1值，0代表在阴影下，1表示照亮
+    #define SHADOW_ATTENUATION(a) unitySampleShadow(a._ShadowCoord) 
 #endif
 
 // -----------------------------

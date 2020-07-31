@@ -232,6 +232,7 @@ inline float3 Unity_SafeNormalize(float3 inVec)
 //  b) GGX
 // * Smith for Visiblity term
 // * Schlick approximation for Fresnel
+// Unity 主要的PBR计算公式
 half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivity, half smoothness,
     float3 normal, float3 viewDir,
     UnityLight light, UnityIndirect gi)

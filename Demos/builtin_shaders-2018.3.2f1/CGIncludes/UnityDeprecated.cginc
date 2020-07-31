@@ -5,6 +5,7 @@
 // All functions in this file are deprecated and should not be use, they will be remove in a later version.
 // They are let here for backward compatibility.
 // This file gather several function related to different part of shader code like BRDF or image based lighting
+
 // to avoid to create multiple deprecated file, this file include deprecated function based on a define
 // to when including this file, it is expected that the caller define which deprecated function group he want to enable
 // Example, following code will include all deprecated BRDF functions:

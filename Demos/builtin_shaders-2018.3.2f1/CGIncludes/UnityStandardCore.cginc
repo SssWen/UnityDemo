@@ -263,6 +263,7 @@ inline FragmentCommonData FragmentSetup (inout float4 i_tex, float3 i_eyeVec, ha
     return o;
 }
 
+// 计算GI结构体，主要是计算directLight和indirectLight wen,默认reflections是开启
 inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light, bool reflections)
 {
     UnityGIInput d;
@@ -301,6 +302,7 @@ inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambient
 
         return UnityGlobalIllumination (d, occlusion, s.normalWorld, g);
     }
+    // 后面会被Unity移除
     else
     {
         return UnityGlobalIllumination (d, occlusion, s.normalWorld);
@@ -429,6 +431,7 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
 {
     UNITY_APPLY_DITHER_CROSSFADE(i.pos.xy);
 
+    // 设置 s 包含posWorld,eyeVec,normalWorld的属性值
     FRAGMENT_SETUP(s)
 
     UNITY_SETUP_INSTANCE_ID(i);
@@ -437,10 +440,18 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     UnityLight mainLight = MainLight ();
     UNITY_LIGHT_ATTENUATION(atten, i, s.posWorld);
 
+    // 采样_OcclusionMap，用于计算indirect Light,包括来至ambient 和 reflections    
     half occlusion = Occlusion(i.tex.xy);
+    // GI 全局光照计算 wen, 
+    // 直接光源使用data.light,直接传递
+    // 计算indirectLight的 diffuse和spcular，都需要进行乘上遮蔽贴图
     UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
 
+    // BRDF 计算，根据UnityGI 采样贴图获取的 {indirectLight}
+    // gi.light, gi.indirect 计算PBS
     half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
+
+    // 自发光计算
     c.rgb += Emission(i.tex.xy);
 
     UNITY_EXTRACT_FOG_FROM_EYE_VEC(i);
@@ -708,6 +719,7 @@ inline UnityGI FragmentGI(
     s.posWorld = posWorld;
     return FragmentGI(s, occlusion, i_ambientOrLightmapUV, atten, light, reflections);
 }
+// 默认 reflections反射是true
 inline UnityGI FragmentGI (
     float3 posWorld,
     half occlusion, half4 i_ambientOrLightmapUV, half atten, half smoothness, half3 normalWorld, half3 eyeVec,

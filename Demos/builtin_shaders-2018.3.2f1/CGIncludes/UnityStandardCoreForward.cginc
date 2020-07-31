@@ -11,6 +11,7 @@
 
 #if UNITY_STANDARD_SIMPLE
     #include "UnityStandardCoreForwardSimple.cginc"
+    // 顶点着色器里的 顶点处理，uv，normalWorld,eyeVec,ambientOrLightmapUV，posWorld
     VertexOutputBaseSimple vertBase (VertexInput v) { return vertForwardBaseSimple(v); }
     VertexOutputForwardAddSimple vertAdd (VertexInput v) { return vertForwardAddSimple(v); }
     half4 fragBase (VertexOutputBaseSimple i) : SV_Target { return fragForwardBaseSimpleInternal(i); }

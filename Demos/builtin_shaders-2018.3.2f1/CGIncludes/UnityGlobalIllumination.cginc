@@ -98,6 +98,7 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
         data.atten = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist));
     #endif
 
+    // 设置gi 的 直接光源的light 和 color
     o_gi.light = data.light;
     o_gi.light.color *= data.atten;
 
@@ -105,13 +106,16 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
         o_gi.indirect.diffuse = ShadeSHPerPixel(normalWorld, data.ambient, data.worldPos);
     #endif
 
+    // 采样LightMap当作间接光源 indirectLight的diffuse    
     #if defined(LIGHTMAP_ON)
         // Baked lightmaps
+        // 烘培lightMap???还是解压lightmap 这里没有完全理解
         half4 bakedColorTex = UNITY_SAMPLE_TEX2D(unity_Lightmap, data.lightmapUV.xy);
-        half3 bakedColor = DecodeLightmap(bakedColorTex);
+        half3 bakedColor = DecodeLightmap(bakedColorTex);//解压烘培好的lightMap
 
         #ifdef DIRLIGHTMAP_COMBINED
             fixed4 bakedDirTex = UNITY_SAMPLE_TEX2D_SAMPLER (unity_LightmapInd, unity_Lightmap, data.lightmapUV.xy);
+            // 烘培好的贴图
             o_gi.indirect.diffuse += DecodeDirectionalLightmap (bakedColor, bakedDirTex, normalWorld);
 
             #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN)
@@ -143,11 +147,13 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
         #endif
     #endif
 
+    // 得到的 间接光源的diffuse 还需要进行乘上 环境光屏蔽贴图
     o_gi.indirect.diffuse *= occlusion;
     return o_gi;
 }
 
 
+// 获取间接光源的 specular 需要乘以 遮蔽贴图 occlussionMap
 inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_GlossyEnvironmentData glossIn)
 {
     half3 specular;
@@ -194,14 +200,20 @@ inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, half3 n
     return UnityGI_IndirectSpecular(data, occlusion, glossIn);
 }
 
+// 老版本reflections是可选的，后面将被移除
 inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3 normalWorld)
 {
     return UnityGI_Base(data, occlusion, normalWorld);
 }
 
+// wen
+// Unity是默认开启reflections反射的
+// glossIn 光泽度相关
 inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3 normalWorld, Unity_GlossyEnvironmentData glossIn)
 {
+    // 间接光源的 diffuse 靠采样 lightmap获取
     UnityGI o_gi = UnityGI_Base(data, occlusion, normalWorld);
+    // 间接光源的 specular 靠采样 cubemap获取
     o_gi.indirect.specular = UnityGI_IndirectSpecular(data, occlusion, glossIn);
     return o_gi;
 }

@@ -27,18 +27,19 @@ struct UnityGI
 
 struct UnityGIInput
 {
+    // light 包含light的color，dir，ndotl
     UnityLight light; // pixel light, sent from the engine
 
-    float3 worldPos;
-    half3 worldViewDir;
-    half atten;
-    half3 ambient;
+    float3 worldPos; // 顶点的worldPos,
+    half3 worldViewDir; // camPos - worldPos,指向相机
+    half atten; // 衰减值，用于判断片段是否在阴影区域，可以理解为单纯的0，1
+    half3 ambient; // 是否有lightMap,
 
     // interpolated lightmap UVs are passed as full float precision data to fragment shaders
     // so lightmapUV (which is used as a tmp inside of lightmap fragment shaders) should
     // also be full float precision to avoid data loss before sampling a texture.
     float4 lightmapUV; // .xy = static lightmap UV, .zw = dynamic lightmap UV
-
+    
     #if defined(UNITY_SPECCUBE_BLENDING) || defined(UNITY_SPECCUBE_BOX_PROJECTION) || defined(UNITY_ENABLE_REFLECTION_BUFFERS)
     float4 boxMin[2];
     #endif
