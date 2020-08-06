@@ -144,6 +144,12 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
     half a          = roughness;
     half a2         = a * a;
 
+    // SchilickGGX 遮蔽函数 
+    // nv分量 = nv /[-nv*a2+nv+a2] 
+    // nl分量 = nh /[-nl*a2+nl+a2] 
+    // 下面是模拟  
+    // nv分量 = nv* sqrt[(-nv*a2+nv)*nv + a2)]
+    // nl分量 = nl* sqrt[(-nl*a2+nl)*nl + a2)]
     half lambdaV    = NdotL * sqrt((-NdotV * a2 + NdotV) * NdotV + a2);
     half lambdaL    = NdotV * sqrt((-NdotL * a2 + NdotL) * NdotL + a2);
 
@@ -153,6 +159,7 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
                                                 // therefore epsilon is smaller than can be represented by half
 #else
     // Approximation of the above formulation (simplify the sqrt, not mathematically correct but close enough)
+    // Unity 使用以下进行模拟G 函数 几何遮蔽函数
     float a = roughness;
     float lambdaV = NdotL * (NdotV * (1 - a) + a);
     float lambdaL = NdotV * (NdotL * (1 - a) + a);
@@ -298,7 +305,7 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     // FresnelTerm系数在这里计算FresnelTerm
     // FresnelTerm()
 
-    // 这里只是specular系数
+    // 这里只是specular系数，BRDF = DGF/4nl*nv 得到的是specularTerm
     float specularTerm = V*D * UNITY_PI; // Torrance-Sparrow model, Fresnel is applied later
 
 #   ifdef UNITY_COLORSPACE_GAMMA
@@ -324,12 +331,12 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
     // gi 为间接光源，light为直接光源
-    // color = 漫反射 + 镜面反射
+    // color = 漫反射(直接+间接) + 镜面反射（直接+间接）
     // color = diffColor(间接光源漫反射+直接光源漫反射【灯光颜色】*diffuse系数) + DGF*直接光源颜色【灯光颜色】 +
     // 表面衰减系数*间接光源镜面反射*菲尼尔插值 ？？？？
-    half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm)
-                    + specularTerm * light.color * FresnelTerm (specColor, lh) 
-                    + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv);
+    half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm) // 漫反射
+                    + specularTerm * light.color * FresnelTerm (specColor, lh) //直接镜面反射 CookTorrance SpecularBRDF = DGF/4NLNV
+                    + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv); // 间接镜面反射
     // 最后一个surfaceReduction 
     // https://zhuanlan.zhihu.com/p/68025039
     return half4(color, 1);
@@ -365,7 +372,7 @@ half4 BRDF2_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     // https://community.arm.com/events/1155
     half a = roughness;
     float a2 = a*a;
-
+    // 公式中的m代表h
     float d = nh * nh * (a2 - 1.f) + 1.00001f;
 #ifdef UNITY_COLORSPACE_GAMMA
     // Tighter approximation for Gamma only rendering mode!
@@ -373,6 +380,8 @@ half4 BRDF2_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     // DVF = (a * sqrt(.25)) / (max(sqrt(0.1), lh)*sqrt(roughness + .5) * d);
     float specularTerm = a / (max(0.32f, lh) * (1.5f + roughness) * d);
 #else
+    // 线性空间默认
+    // 标准的 法线分布函数 NDF = a2 / 4*d*d
     float specularTerm = a2 / (max(0.1f, lh*lh) * (roughness + 0.5f) * (d * d) * 4);
 #endif
 

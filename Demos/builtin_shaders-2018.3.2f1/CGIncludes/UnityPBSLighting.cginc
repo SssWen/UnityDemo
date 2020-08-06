@@ -18,6 +18,7 @@
         #define UNITY_BRDF_PBS BRDF3_Unity_PBS
     #elif defined(UNITY_PBS_USE_BRDF3)
         #define UNITY_BRDF_PBS BRDF3_Unity_PBS
+    // 手机使用这版本
     #elif defined(UNITY_PBS_USE_BRDF2)
         #define UNITY_BRDF_PBS BRDF2_Unity_PBS
     // Unity的高质量，高性能的PBR使用的是这个版本

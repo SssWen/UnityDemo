@@ -519,6 +519,8 @@ half mipmapLevelToPerceptualRoughness(half mipmapLevel)
 }
 
 // ----------------------------------------------------------------------------
+// IBL Unity类似采样Cubemap，根据粗糙度（这里是通过glossIn光泽度里的roughness）采样对应的mip级别
+// 在OpenGL这张图叫做预滤波环境贴图 https://learnopengl-cn.github.io/07%20PBR/03%20IBL/02%20Specular%20IBL/
 half3 Unity_GlossyEnvironment (UNITY_ARGS_TEXCUBE(tex), half4 hdr, Unity_GlossyEnvironmentData glossIn)
 {
     half perceptualRoughness = glossIn.roughness /* perceptualRoughness */ ;

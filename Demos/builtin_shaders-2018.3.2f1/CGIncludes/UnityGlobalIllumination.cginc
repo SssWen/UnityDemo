@@ -159,7 +159,8 @@ inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_G
     half3 specular;
 
     #ifdef UNITY_SPECCUBE_BOX_PROJECTION
-        // we will tweak reflUVW in glossIn directly (as we pass it to Unity_GlossyEnvironment twice for probe0 and probe1), so keep original to pass into BoxProjectedCubemapDirection
+        // we will tweak reflUVW in glossIn directly (as we pass it to Unity_GlossyEnvironment twice for probe0 and probe1),
+        //  so keep original to pass into BoxProjectedCubemapDirection
         half3 originalReflUVW = glossIn.reflUVW;
         glossIn.reflUVW = BoxProjectedCubemapDirection (originalReflUVW, data.worldPos, data.probePosition[0], data.boxMin[0], data.boxMax[0]);
     #endif
