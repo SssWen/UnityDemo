@@ -19,7 +19,7 @@ half SpecularStrength(half3 specular)
     #endif
 }
 
-// Diffuse/Spec Energy conservation
+// Diffuse/Spec Energy conservation 是否考虑能量守恒，如果能量守恒漫反射需要减去反射系数
 inline half3 EnergyConservationBetweenDiffuseAndSpecular (half3 albedo, half3 specColor, out half oneMinusReflectivity)
 {
     oneMinusReflectivity = 1 - SpecularStrength(specColor);

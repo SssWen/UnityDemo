@@ -128,6 +128,7 @@ half Occlusion(float2 uv)
 #endif
 }
 
+// 高光流对于金属度贴图的采样
 half4 SpecularGloss(float2 uv)
 {
     half4 sg;

@@ -46,6 +46,7 @@ Shader "Autodesk Interactive"
         [HideInInspector] _ZWrite ("__zw", Float) = 1.0
     }
 
+    // 这个shader没用到，RoughnessSetup没用到
     CGINCLUDE
         #define UNITY_SETUP_BRDF_INPUT RoughnessSetup
     ENDCG

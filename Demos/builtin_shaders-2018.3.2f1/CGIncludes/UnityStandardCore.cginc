@@ -186,10 +186,12 @@ struct FragmentCommonData
 #endif
 };
 
+// 对比 金属度工作流和 镜面反射工作流，Unity默认高光反射工作流
 #ifndef UNITY_SETUP_BRDF_INPUT
     #define UNITY_SETUP_BRDF_INPUT SpecularSetup
 #endif
 
+// 高光流 的alpha通道用于粗超度。。
 inline FragmentCommonData SpecularSetup (float4 i_tex)
 {
     half4 specGloss = SpecularGloss(i_tex.xy);
@@ -207,6 +209,7 @@ inline FragmentCommonData SpecularSetup (float4 i_tex)
     return o;
 }
 
+// Autodesk Interactive 可能是Autodesk交互用的shader设置
 inline FragmentCommonData RoughnessSetup(float4 i_tex)
 {
     half2 metallicGloss = MetallicRough(i_tex.xy);
@@ -253,6 +256,7 @@ inline FragmentCommonData FragmentSetup (inout float4 i_tex, float3 i_eyeVec, ha
         clip (alpha - _Cutoff);
     #endif
 
+    // 这里区分 金属流 和 高光反射流 PBS
     FragmentCommonData o = UNITY_SETUP_BRDF_INPUT (i_tex);
     o.normalWorld = PerPixelWorldNormal(i_tex, tangentToWorld);
     o.eyeVec = NormalizePerPixelNormal(i_eyeVec);
@@ -299,7 +303,7 @@ inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambient
         #if UNITY_STANDARD_SIMPLE
             g.reflUVW = s.reflUVW;
         #endif
-
+        // 这里处理GI,计算间接光源的diffuse采样[lightMap]，specular采样[cubemap光照探针等]
         return UnityGlobalIllumination (d, occlusion, s.normalWorld, g);
     }
     // 后面会被Unity移除
@@ -431,13 +435,13 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
 {
     UNITY_APPLY_DITHER_CROSSFADE(i.pos.xy);
 
-    // 设置 s 包含posWorld,eyeVec,normalWorld的属性值
-    FRAGMENT_SETUP(s)
+    // 设置 s 包含posWorld,eyeVec,normalWorld的属性值,初始的diffuseColor和SpecularColor默认值
+    FRAGMENT_SETUP(s) // 这里区分开 金属流 和 高光流，它们得到的参数是一样的，只是值不一样。
 
     UNITY_SETUP_INSTANCE_ID(i);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
-    UnityLight mainLight = MainLight ();
+    UnityLight mainLight = MainLight (); // MainLight 第一盏光的数据，_LightColor0和dir
     UNITY_LIGHT_ATTENUATION(atten, i, s.posWorld);
 
     // 采样_OcclusionMap，用于计算indirect Light,包括来至ambient 和 reflections    
@@ -448,10 +452,10 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
 
     // BRDF 计算，根据UnityGI 采样贴图获取的 {indirectLight}
-    // gi.light, gi.indirect 计算PBS
+    // gi.light直接光照, gi.indirect间接光照 计算PBS,这里使用 BRDF1_Unity_PBS，高质量
     half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
 
-    // 自发光计算
+    // 自发光计算,Unity的自发光是直接采样贴图的
     c.rgb += Emission(i.tex.xy);
 
     UNITY_EXTRACT_FOG_FROM_EYE_VEC(i);
@@ -529,7 +533,7 @@ VertexOutputForwardAdd vertForwardAdd (VertexInput v)
     UNITY_TRANSFER_FOG_COMBINED_WITH_EYE_VEC(o, o.pos);
     return o;
 }
-
+// Add pass 里不计算GI,也就是不计算间接光照。
 half4 fragForwardAddInternal (VertexOutputForwardAdd i)
 {
     UNITY_APPLY_DITHER_CROSSFADE(i.pos.xy);

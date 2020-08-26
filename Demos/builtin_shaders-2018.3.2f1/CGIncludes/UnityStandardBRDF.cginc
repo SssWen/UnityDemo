@@ -30,7 +30,7 @@ half SmoothnessToRoughness(half smoothness)
 
 float SmoothnessToPerceptualRoughness(float smoothness)
 {
-    return (1 - smoothness);
+    return (1 - smoothness); // roughness = 1 - gloss; 粗造度 = 1 - 光泽度
 }
 
 //-------------------------------------------------------------------------------------
@@ -330,8 +330,10 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     specularTerm *= any(specColor) ? 1.0 : 0.0;
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
-    // gi 为间接光源，light为直接光源
-    // color = 漫反射(直接+间接) + 镜面反射（直接+间接）
+    // gi 为间接光源，light为直接光源    
+    // color = 镜面反射 + 漫反射（GI: 漫反射+镜面反射）
+    // color = 镜面反射(BRDF) + 漫反射（GI: 采样LightMap（diffuse）+采样光照探针(specular)）
+
     // color = diffColor(间接光源漫反射+直接光源漫反射【灯光颜色】*diffuse系数) + DGF*直接光源颜色【灯光颜色】 +
     // 表面衰减系数*间接光源镜面反射*菲尼尔插值 ？？？？
     half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm) // 漫反射

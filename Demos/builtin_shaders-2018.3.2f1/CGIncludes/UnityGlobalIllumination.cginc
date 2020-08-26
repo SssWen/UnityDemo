@@ -119,7 +119,7 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
             o_gi.indirect.diffuse += DecodeDirectionalLightmap (bakedColor, bakedDirTex, normalWorld);
 
             #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN)
-                ResetUnityLight(o_gi.light);
+                ResetUnityLight(o_gi.light); // 烘培的直接光照设置为0
                 o_gi.indirect.diffuse = SubtractMainLightWithRealtimeAttenuationFromLightmap (o_gi.indirect.diffuse, data.atten, bakedColorTex, normalWorld);
             #endif
 
@@ -154,6 +154,10 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
 
 
 // 获取间接光源的 specular 需要乘以 遮蔽贴图 occlussionMap
+// 采样的是 unity_SpecCube0 这张HDR 环境贴图，用于计算间接光源的specularTerm
+// Unity默认的环境贴图是Skybox，也就是默认情况下 unity_SpecCube0就是SKybox.可以通过unity_SpecCube0访问Skybox.?
+// 使用相关的函数，对应的mip级别，也就是类似OpenGL的采样预滤波环境贴图计算间接光的SpecularTerm,
+// 具体理解参考 https://catlikecoding.com/unity/tutorials/scriptable-render-pipeline/reflections/
 inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_GlossyEnvironmentData glossIn)
 {
     half3 specular;
@@ -190,7 +194,7 @@ inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_G
             specular = env0;
         #endif
     #endif
-
+     // sss 需要在这里修改Occlusion,Jimenez_SpecularOcclusion
     return specular * occlusion;
 }
 
@@ -209,13 +213,13 @@ inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3
 
 // wen
 // Unity是默认开启reflections反射的
-// glossIn 光泽度相关
+// GI 部分计算间接光照
 inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3 normalWorld, Unity_GlossyEnvironmentData glossIn)
 {
-    // 间接光源的 diffuse 靠采样 lightmap获取
+    // 间接光源的 diffuse 靠采样 lightmap获取 和 lightProbe 光照探针
     UnityGI o_gi = UnityGI_Base(data, occlusion, normalWorld);
-    // 间接光源的 specular 靠采样 cubemap获取
-    o_gi.indirect.specular = UnityGI_IndirectSpecular(data, occlusion, glossIn);
+    // 间接光源的 specular 靠采样 cubemap获取 反射探针
+    o_gi.indirect.specular = UnityGI_IndirectSpecular(data, occlusion, glossIn); 
     return o_gi;
 }
 
