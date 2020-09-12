@@ -252,7 +252,7 @@ inline float3 Unity_SafeNormalize(float3 inVec)
 // Unity 主要的PBR计算公式
 half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivity, half smoothness,
     float3 normal, float3 viewDir,
-    UnityLight light, UnityIndirect gi)
+    UnityLight light（直接光照）, UnityIndirect gi（间接光照颜色diffuse + specular）)
 {
     float perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
     float3 halfDir = Unity_SafeNormalize (float3(light.dir) + viewDir);
@@ -336,7 +336,7 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
 
     // color = diffColor(间接光源漫反射+直接光源漫反射【灯光颜色】*diffuse系数) + DGF*直接光源颜色【灯光颜色】 +
     // 表面衰减系数*间接光源镜面反射*菲尼尔插值 ？？？？
-    half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm) // 漫反射
+    half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm) // 漫反射 = 直接光照漫反射+间接光照漫反射
                     + specularTerm * light.color * FresnelTerm (specColor, lh) //直接镜面反射 CookTorrance SpecularBRDF = DGF/4NLNV
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv); // 间接镜面反射
     // 最后一个surfaceReduction 

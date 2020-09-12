@@ -100,9 +100,10 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
 
     // 设置gi 的 直接光源的light 和 color
     o_gi.light = data.light;
-    o_gi.light.color *= data.atten;
+    o_gi.light.color *= data.atten; // 光照颜色 * 阴影衰减值，衰减值在这里使用
 
-    #if UNITY_SHOULD_SAMPLE_SH
+    // 间接光 漫反射部分 = 静态的 读取lightmap，动态的读取light probe
+    #if UNITY_SHOULD_SAMPLE_SH // 这里采样 环境光，对环境光计算,球谐函数用来计算漫反射，精度不需要那么高,所以可以当作漫反射
         o_gi.indirect.diffuse = ShadeSHPerPixel(normalWorld, data.ambient, data.worldPos);
     #endif
 
@@ -158,6 +159,7 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
 // Unity默认的环境贴图是Skybox，也就是默认情况下 unity_SpecCube0就是SKybox.可以通过unity_SpecCube0访问Skybox.?
 // 使用相关的函数，对应的mip级别，也就是类似OpenGL的采样预滤波环境贴图计算间接光的SpecularTerm,
 // 具体理解参考 https://catlikecoding.com/unity/tutorials/scriptable-render-pipeline/reflections/
+// 天空盒 + 反射探针 = unity_SpecCube0 和 unity_SpecCube1
 inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_GlossyEnvironmentData glossIn)
 {
     half3 specular;
@@ -165,6 +167,8 @@ inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_G
     #ifdef UNITY_SPECCUBE_BOX_PROJECTION
         // we will tweak reflUVW in glossIn directly (as we pass it to Unity_GlossyEnvironment twice for probe0 and probe1),
         //  so keep original to pass into BoxProjectedCubemapDirection
+        // 如果反射探针中开启BOX_PROJECTION模式
+        // 开启BOX_PROJECTION，反射探针的采样会根据物体移动发生变化
         half3 originalReflUVW = glossIn.reflUVW;
         glossIn.reflUVW = BoxProjectedCubemapDirection (originalReflUVW, data.worldPos, data.probePosition[0], data.boxMin[0], data.boxMax[0]);
     #endif

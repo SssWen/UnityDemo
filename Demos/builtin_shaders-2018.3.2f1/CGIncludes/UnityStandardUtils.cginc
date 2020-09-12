@@ -177,6 +177,7 @@ half3 ShadeSHPerVertex (half3 normal, half3 ambient)
     return ambient;
 }
 
+// 获取某个像素周围的间接光信息，当作 diffuse,
 half3 ShadeSHPerPixel (half3 normal, half3 ambient, float3 worldPos)
 {
     half3 ambient_contrib = 0.0;
@@ -226,7 +227,7 @@ half3 ShadeSHPerPixel (half3 normal, half3 ambient, float3 worldPos)
 //-------------------------------------------------------------------------------------
 inline float3 BoxProjectedCubemapDirection (float3 worldRefl, float3 worldPos, float4 cubemapCenter, float4 boxMin, float4 boxMax)
 {
-    // Do we have a valid reflection probe?
+    // Do we have a valid reflection probe? 判断是否有合法的反射探针
     UNITY_BRANCH
     if (cubemapCenter.w > 0.0)
     {

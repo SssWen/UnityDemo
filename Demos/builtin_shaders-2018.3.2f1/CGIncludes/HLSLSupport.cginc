@@ -341,8 +341,9 @@
     // all platforms except GLES2.0 have built-in shadow comparison samplers
     #define SHADOWS_NATIVE
 #elif defined(SHADER_API_GLES) && defined(UNITY_ENABLE_NATIVE_SHADOW_LOOKUPS)
-    // GLES2.0 also has built-in shadow comparison samplers, but only on platforms where we pass UNITY_ENABLE_NATIVE_SHADOW_LOOKUPS from the editor
-    #define SHADOWS_NATIVE
+    // GLES2.0 also has built-in shadow comparison samplers, but only on platforms where we pass UNITY_ENABLE_NATIVE_SHADOW_LOOKUPS 
+    // from the editor
+    #define SHADOWS_NATIVE // 表示原生硬件是否又shadowmap支持
 #endif
 
 #if defined(SHADER_API_D3D11) || (defined(UNITY_COMPILER_HLSLCC) && defined(SHADOWS_NATIVE))

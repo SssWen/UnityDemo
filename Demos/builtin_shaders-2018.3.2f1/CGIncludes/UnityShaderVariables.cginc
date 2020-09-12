@@ -156,10 +156,15 @@ CBUFFER_START(UnityShadows)
     float4 unity_LightShadowBias;
     float4 _LightSplitsNear;
     float4 _LightSplitsFar;
-    float4x4 unity_WorldToShadow[4];
+    float4x4 unity_WorldToShadow[4]; // worldToShadow[worldToLight]的矩阵,世界-光源空间，一个矩阵用于spotlight，其他用于directional light
+    // shadowmap 就是以光源空间为相机空间的产生的depthmap
     half4 _LightShadowData;
     float4 unity_ShadowFadeCenterAndType;
 CBUFFER_END
+// _LightShadowData.x - shadow strength
+// _LightShadowData.y - Appears to be unused
+// _LightShadowData.z - 1.0 / shadow far distance
+// _LightShadowData.w - shadow near distance
 
 // ----------------------------------------------------------------------------
 

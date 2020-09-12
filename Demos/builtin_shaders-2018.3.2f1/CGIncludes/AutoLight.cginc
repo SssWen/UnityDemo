@@ -23,17 +23,18 @@
         #define TRANSFER_SHADOW(a) a._ShadowCoord = mul( unity_WorldToShadow[0], mul( unity_ObjectToWorld, v.vertex ) );
         inline fixed unitySampleShadow (unityShadowCoord4 shadowCoord)
         {
-            #if defined(SHADOWS_NATIVE)
-                fixed shadow = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord.xyz);
-                shadow = _LightShadowData.r + shadow * (1-_LightShadowData.r);
+            #if defined(SHADOWS_NATIVE) // 表示硬件是否有原生shadow map支持,如果有，走这里
+                fixed shadow = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord.xyz);// 得到阴影值，范围(0,1)
+                shadow = _LightShadowData.r + shadow * (1-_LightShadowData.r); // 与阴影强度进行插值lerp
                 return shadow;
             #else
                 // dist 为shadowMap 存储的距离光源距离。
                 unityShadowCoord dist = SAMPLE_DEPTH_TEXTURE(_ShadowMapTexture, shadowCoord.xy);
                 // tegra is confused if we use _LightShadowData.x directly
                 // with "ambiguous overloaded function reference max(mediump float, float)"
-                unityShadowCoord lightShadowDataX = _LightShadowData.x;
-                unityShadowCoord threshold = shadowCoord.z; // 当前距离光源距离
+                unityShadowCoord lightShadowDataX = _LightShadowData.x; // 为衰减值，lightShadow
+                unityShadowCoord threshold = shadowCoord.z; // 当前距离光源距离 ,unityShadowCoord = float
+                // float threshold = shadowCoord.z; // 当前距离光源距离
                 return max(dist > threshold, lightShadowDataX);
             #endif
         }
@@ -74,7 +75,7 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
     half shadowMaskAttenuation = UnitySampleBakedOcclusion(lightmapUV, worldPos);
 
     half realtimeShadowAttenuation = 1.0f;
-    //directional realtime shadow
+    //directional realtime shadow 方向光的实时阴影
     #if defined (SHADOWS_SCREEN)
         #if defined(UNITY_NO_SCREENSPACE_SHADOWS) && !defined(UNITY_HALF_PRECISION_FRAGMENT_SHADER_REGISTERS)
             realtimeShadowAttenuation = unitySampleShadow(mul(unity_WorldToShadow[0], unityShadowCoord4(worldPos, 1)));

@@ -191,7 +191,7 @@ struct FragmentCommonData
     #define UNITY_SETUP_BRDF_INPUT SpecularSetup
 #endif
 
-// 高光流 的alpha通道用于粗超度。。
+// 高光流 的alpha通道用于粗超度。。，设置初始的 diffuse，specular
 inline FragmentCommonData SpecularSetup (float4 i_tex)
 {
     half4 specGloss = SpecularGloss(i_tex.xy);
@@ -202,8 +202,8 @@ inline FragmentCommonData SpecularSetup (float4 i_tex)
     half3 diffColor = EnergyConservationBetweenDiffuseAndSpecular (Albedo(i_tex), specColor, /*out*/ oneMinusReflectivity);
 
     FragmentCommonData o = (FragmentCommonData)0;
-    o.diffColor = diffColor;
-    o.specColor = specColor;
+    o.diffColor = diffColor; // 漫反射颜色 - 采样Albodo贴图 half3 albedo = _Color.rgb * tex2D (_MainTex, texcoords.xy).rgb;
+    o.specColor = specColor; // specular 颜色 - specGloss设置的颜色
     o.oneMinusReflectivity = oneMinusReflectivity;
     o.smoothness = smoothness;
     return o;
@@ -437,12 +437,22 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
 
     // 设置 s 包含posWorld,eyeVec,normalWorld的属性值,初始的diffuseColor和SpecularColor默认值
     FRAGMENT_SETUP(s) // 这里区分开 金属流 和 高光流，它们得到的参数是一样的，只是值不一样。
+    // 并且设置diffuse = 采样Albodo贴图， specular颜色 = 设置的specular
+    //     距离实现在 SpecularSetup ，
+    //     o.diffColor = diffColor; // 漫反射颜色 - 采样Albodo贴图
+    //     half3 albedo = _Color.rgb * tex2D (_MainTex, texcoords.xy).rgb; 物体固有色
+    //     o.specColor = specColor; // 物体固有镜面反射颜色
 
     UNITY_SETUP_INSTANCE_ID(i);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
-    UnityLight mainLight = MainLight (); // MainLight 第一盏光的数据，_LightColor0和dir
+    UnityLight mainLight = MainLight (); 
+    // MainLight 第一盏光的数据，_LightColor0 和 dir
+    //     l.color = _LightColor0.rgb;
+    //     l.dir = _WorldSpaceLightPos0.xyz;
     UNITY_LIGHT_ATTENUATION(atten, i, s.posWorld);
+    // 方向光和点光源计算不同
+    // atten = UNITY_SHADOW_ATTENUATION(input, worldPos);
 
     // 采样_OcclusionMap，用于计算indirect Light,包括来至ambient 和 reflections    
     half occlusion = Occlusion(i.tex.xy);
@@ -450,9 +460,18 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     // 直接光源使用data.light,直接传递
     // 计算indirectLight的 diffuse和spcular，都需要进行乘上遮蔽贴图
     UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
+    //  直接光照 light = data.light * atten,计算阴影的衰减值
+    //  间接光照 indirect 的 diffuse = AO 【乘上】 采样lightmap + 计算光照探针 light probe [UnityGI_Base]
+    //  间接光照 indirect 的 specular = AO 【乘上】 采样 反射探针 projection probe [UnityGI_IndirectSpecular]
 
+    // struct UnityGI
+    // {
+    //     UnityLight light;
+    //     UnityIndirect indirect;
+    // };
     // BRDF 计算，根据UnityGI 采样贴图获取的 {indirectLight}
     // gi.light直接光照, gi.indirect间接光照 计算PBS,这里使用 BRDF1_Unity_PBS，高质量
+    // 根据直接光源，间接光源，粗造度，法线 再次计算光照
     half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
 
     // 自发光计算,Unity的自发光是直接采样贴图的
