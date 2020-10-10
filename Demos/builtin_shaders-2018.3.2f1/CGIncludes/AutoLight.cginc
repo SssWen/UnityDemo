@@ -21,11 +21,12 @@
     #if defined(UNITY_NO_SCREENSPACE_SHADOWS)
         UNITY_DECLARE_SHADOWMAP(_ShadowMapTexture);
         #define TRANSFER_SHADOW(a) a._ShadowCoord = mul( unity_WorldToShadow[0], mul( unity_ObjectToWorld, v.vertex ) );
-        inline fixed unitySampleShadow (unityShadowCoord4 shadowCoord)
+        inline fixed unitySampleShadow (unityShadowCoord4 shadowCoord) // SHADOW_ATTENUATION 调用这个unitySampleShadow
         {
             #if defined(SHADOWS_NATIVE) // 表示硬件是否有原生shadow map支持,如果有，走这里
                 fixed shadow = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord.xyz);// 得到阴影值，范围(0,1)
                 shadow = _LightShadowData.r + shadow * (1-_LightShadowData.r); // 与阴影强度进行插值lerp
+                // lightShadow = shadowStrength + shadow * (1-shadowStrength)，_LightShadowData.r 保存阴影强度，在Light的面板上调节这个值                return shadow;
                 return shadow;
             #else
                 // dist 为shadowMap 存储的距离光源距离。

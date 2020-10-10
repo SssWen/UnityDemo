@@ -6,7 +6,7 @@
 #include "UnityCG.cginc"
 #include "UnityShaderVariables.cginc"
 #include "UnityStandardConfig.cginc"
-#include "UnityStandardInput.cginc"
+#include "UnityStandardInput.cginc" // 变量设置
 #include "UnityPBSLighting.cginc"
 #include "UnityStandardUtils.cginc"
 #include "UnityGBuffer.cginc"
@@ -191,7 +191,7 @@ struct FragmentCommonData
     #define UNITY_SETUP_BRDF_INPUT SpecularSetup
 #endif
 
-// 高光流 的alpha通道用于粗超度。。，设置初始的 diffuse，specular
+// 高光流设置， alpha通道用于粗超度。。，设置初始的 diffuse，specular
 inline FragmentCommonData SpecularSetup (float4 i_tex)
 {
     half4 specGloss = SpecularGloss(i_tex.xy);
@@ -228,6 +228,7 @@ inline FragmentCommonData RoughnessSetup(float4 i_tex)
     return o;
 }
 
+// 金属流 设置
 inline FragmentCommonData MetallicSetup (float4 i_tex)
 {
     half2 metallicGloss = MetallicGloss(i_tex.xy);

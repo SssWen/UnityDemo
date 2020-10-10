@@ -270,8 +270,8 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     half shiftAmount = dot(normal, viewDir);
     normal = shiftAmount < 0.0f ? normal + viewDir * (-shiftAmount + 1e-5f) : normal;
     // A re-normalization should be applied here but as the shift is small we don't do it to save ALU.
-    //normal = normalize(normal);
-
+    // normal = normalize(normal);
+    // 
     float nv = saturate(dot(normal, viewDir)); // TODO: this saturate should no be necessary here
 #else
     half nv = abs(dot(normal, viewDir));    // This abs allow to limit artifact

@@ -102,7 +102,7 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
     o_gi.light = data.light;
     o_gi.light.color *= data.atten; // 光照颜色 * 阴影衰减值，衰减值在这里使用
 
-    // 间接光 漫反射部分 = 静态的 读取lightmap，动态的读取light probe
+    // 间接光 漫反射部分 = 静态的 读取lightmap，动态的读取light probe，球谐函数相关计算
     #if UNITY_SHOULD_SAMPLE_SH // 这里采样 环境光，对环境光计算,球谐函数用来计算漫反射，精度不需要那么高,所以可以当作漫反射
         o_gi.indirect.diffuse = ShadeSHPerPixel(normalWorld, data.ambient, data.worldPos);
     #endif
