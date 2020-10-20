@@ -132,10 +132,11 @@ Shader "Standard"
         }
         // ------------------------------------------------------------------
         //  Shadow rendering pass
-        Pass {
+        Pass { 
             Name "ShadowCaster"
-            Tags { "LightMode" = "ShadowCaster" }
-
+            Tags { "LightMode" = "ShadowCaster" } // 这个pass，用来更新shadowMap，光源位置出发，记录的深度值。
+            // 如果摄像机记录的深度值，转换到光源空间，如果相机的深度值大于shadowmap中的深度值，表面该表面可见，但是却处于光源的阴影中。
+            // 通过这种方式，阴影图就包含了屏幕空间中所有的阴影区域。
             ZWrite On ZTest LEqual
 
             CGPROGRAM

@@ -232,9 +232,9 @@ inline FragmentCommonData RoughnessSetup(float4 i_tex)
 inline FragmentCommonData MetallicSetup (float4 i_tex)
 {
     half2 metallicGloss = MetallicGloss(i_tex.xy);
-    half metallic = metallicGloss.x;
+    half metallic = metallicGloss.x; // Metallic 的 R通道
     half smoothness = metallicGloss.y; // this is 1 minus the square root of real roughness m.
-
+    // smoothness = Metallic 的 A通道 * smoothness
     half oneMinusReflectivity;
     half3 specColor;
     half3 diffColor = DiffuseAndSpecularFromMetallic (Albedo(i_tex), metallic, /*out*/ specColor, /*out*/ oneMinusReflectivity);
@@ -268,7 +268,7 @@ inline FragmentCommonData FragmentSetup (inout float4 i_tex, float3 i_eyeVec, ha
     return o;
 }
 
-// 计算GI结构体，主要是计算directLight和indirectLight wen,默认reflections是开启
+// 计算GI结构体，主要是计算directLight和indirectLight wen,默认reflections是开启, 环境光 读取 颜色设置 或者 lightmap 颜色
 inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light, bool reflections)
 {
     UnityGIInput d;

@@ -18,7 +18,7 @@
 // ---- Screen space direction light shadows helpers (any version)
 #if defined (SHADOWS_SCREEN)
 
-    #if defined(UNITY_NO_SCREENSPACE_SHADOWS)
+    #if defined(UNITY_NO_SCREENSPACE_SHADOWS) // 当 配置 no shadow cascade 的时候，UNITY_NO_SCREENSPACE_SHADOWS开启
         UNITY_DECLARE_SHADOWMAP(_ShadowMapTexture);
         #define TRANSFER_SHADOW(a) a._ShadowCoord = mul( unity_WorldToShadow[0], mul( unity_ObjectToWorld, v.vertex ) );
         inline fixed unitySampleShadow (unityShadowCoord4 shadowCoord) // SHADOW_ATTENUATION 调用这个unitySampleShadow
@@ -40,7 +40,7 @@
             #endif
         }
 
-    #else // UNITY_NO_SCREENSPACE_SHADOWS
+    #else // UNITY_NO_SCREENSPACE_SHADOWS // 如果shadow cascade 含有，则走这里
         UNITY_DECLARE_SCREENSPACE_SHADOWMAP(_ShadowMapTexture);
         #define TRANSFER_SHADOW(a) a._ShadowCoord = ComputeScreenPos(a.pos);
         inline fixed unitySampleShadow (unityShadowCoord4 shadowCoord)

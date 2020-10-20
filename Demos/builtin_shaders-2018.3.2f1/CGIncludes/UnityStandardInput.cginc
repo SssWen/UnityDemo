@@ -18,33 +18,33 @@
     #define _DETAIL 1
 #endif
 
-//---------------------------------------
+//--------------------------------------- 查看 StandardShaderGUI 的 Styles
 half4       _Color;
 half        _Cutoff;
 
-sampler2D   _MainTex;
+sampler2D   _MainTex;  // 实际上就是 albedoMap，查看  Styles.albedoText
 float4      _MainTex_ST;
 
-sampler2D   _DetailAlbedoMap;
+sampler2D   _DetailAlbedoMap; // Detail Albedo x2
 float4      _DetailAlbedoMap_ST;
 
-sampler2D   _BumpMap;
+sampler2D   _BumpMap;  // 实际上是 NormalMap 贴图，查看 normalMapText 说明
 half        _BumpScale;
 
-sampler2D   _DetailMask;
-sampler2D   _DetailNormalMap;
+sampler2D   _DetailMask; // Detail Mask 贴图
+sampler2D   _DetailNormalMap; 
 half        _DetailNormalMapScale;
 
-sampler2D   _SpecGlossMap;
-sampler2D   _MetallicGlossMap;
+sampler2D   _SpecGlossMap; // Specular 贴图
+sampler2D   _MetallicGlossMap; // Metallic 贴图
 half        _Metallic;
 float       _Glossiness;
 float       _GlossMapScale;
 
-sampler2D   _OcclusionMap;
+sampler2D   _OcclusionMap; // Occlusion 贴图
 half        _OcclusionStrength;
 
-sampler2D   _ParallaxMap;
+sampler2D   _ParallaxMap; // Height Map 查看贴图实际上就是 高度图，查看 heightMap.textureValue 说明
 half        _Parallax;
 half        _UVSec;
 
@@ -128,7 +128,7 @@ half Occlusion(float2 uv)
 #endif
 }
 
-// 高光流对于金属度贴图的采样
+// 高光流 设置
 half4 SpecularGloss(float2 uv)
 {
     half4 sg;
@@ -151,6 +151,7 @@ half4 SpecularGloss(float2 uv)
     return sg;
 }
 
+// 金属流，使用 metallic = r通道 , gloss = a通道*_Glossiness
 half2 MetallicGloss(float2 uv)
 {
     half2 mg;
@@ -178,7 +179,7 @@ half2 MetallicRough(float2 uv)
 {
     half2 mg;
 #ifdef _METALLICGLOSSMAP
-    mg.r = tex2D(_MetallicGlossMap, uv).r;
+    mg.r = tex2D(_MetallicGlossMap, uv).r; // Metallic, R通道
 #else
     mg.r = _Metallic;
 #endif
