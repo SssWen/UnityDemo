@@ -269,6 +269,8 @@ inline FragmentCommonData FragmentSetup (inout float4 i_tex, float3 i_eyeVec, ha
 }
 
 // 计算GI结构体，主要是计算directLight和indirectLight wen,默认reflections是开启, 环境光 读取 颜色设置 或者 lightmap 颜色
+// gi.indirect.diffuse = LightMap + LightProbe
+// gi.indirect.specular = ReflectionProbe
 inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light, bool reflections)
 {
     UnityGIInput d;
@@ -276,10 +278,11 @@ inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambient
     d.worldPos = s.posWorld;
     d.worldViewDir = -s.eyeVec;
     d.atten = atten;
+    // 如果有LightMap的话 ambiant = 0，如果没有LightMap ambient = LightProb
     #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
         d.ambient = 0;
         d.lightmapUV = i_ambientOrLightmapUV;
-    #else
+    #else // 无lightmap，就把LightProbe计算放在ambient上
         d.ambient = i_ambientOrLightmapUV.rgb;
         d.lightmapUV = 0;
     #endif
@@ -304,7 +307,7 @@ inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambient
         #if UNITY_STANDARD_SIMPLE
             g.reflUVW = s.reflUVW;
         #endif
-        // 这里处理GI,计算间接光源的diffuse采样[lightMap]，specular采样[cubemap光照探针等]
+        // 这里处理GI,计算间接光源的diffuse采样[lightMap,lightProb]，specular采样[cubemap reflectionProbe等]
         return UnityGlobalIllumination (d, occlusion, s.normalWorld, g);
     }
     // 后面会被Unity移除
@@ -330,7 +333,8 @@ half4 OutputForward (half4 output, half alphaFromSurface)
     #endif
     return output;
 }
-
+ 
+// SH 计算在Vertex中，保存在 ambientOrLightmapUV 中
 inline half4 VertexGIForward(VertexInput v, float3 posWorld, half3 normalWorld)
 {
     half4 ambientOrLightmapUV = 0;
@@ -418,7 +422,7 @@ VertexOutputForwardBase vertForwardBase (VertexInput v)
     //We need this for shadow receving
     UNITY_TRANSFER_LIGHTING(o, v.uv1);
 
-    o.ambientOrLightmapUV = VertexGIForward(v, posWorld, normalWorld);
+    o.ambientOrLightmapUV = VertexGIForward(v, posWorld, normalWorld); // 如果SH计算放在Vert上
 
     #ifdef _PARALLAXMAP
         TANGENT_SPACE_ROTATION;
@@ -460,6 +464,8 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     // GI 全局光照计算 wen, 
     // 直接光源使用data.light,直接传递
     // 计算indirectLight的 diffuse和spcular，都需要进行乘上遮蔽贴图
+    // gi.indirect.diffuse LightMap + Light Probe
+    // gi.indirect.specular reflection Probe
     UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
     //  直接光照 light = data.light * atten,计算阴影的衰减值
     //  间接光照 indirect 的 diffuse = AO 【乘上】 采样lightmap + 计算光照探针 light probe [UnityGI_Base]

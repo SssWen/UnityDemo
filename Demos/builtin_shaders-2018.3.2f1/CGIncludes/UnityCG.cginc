@@ -502,7 +502,8 @@ half4 UnityEncodeRGBM (half3 color, float maxRGBM)
 
 // Decodes HDR textures
 // handles dLDR, RGBM formats
-inline half3 DecodeHDR (half4 data, half4 decodeInstructions)
+// rgb_mip(unity_SpecCube0),unity_SpecCube0_HDR 
+inline half3 DecodeHDR (half4 data, half4 decodeInstructions) 
 {
     // Take into account texture alpha if decodeInstructions.w is true(the alpha value affects the RGB channels)
     half alpha = decodeInstructions.w * (data.a - 1.0) + 1.0;

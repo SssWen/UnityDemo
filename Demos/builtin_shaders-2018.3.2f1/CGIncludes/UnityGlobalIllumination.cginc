@@ -85,6 +85,9 @@ inline void ResetUnityGI(out UnityGI outGI)
     outGI.indirect.specular = 0;
 }
 
+// LightMap + LightProbe
+// LightMap属于静态的
+// LightProbe属于空间的，动态的
 inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld)
 {
     UnityGI o_gi;
@@ -102,12 +105,14 @@ inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld
     o_gi.light = data.light;
     o_gi.light.color *= data.atten; // 光照颜色 * 阴影衰减值，衰减值在这里使用
 
-    // 间接光 漫反射部分 = 静态的 读取lightmap，动态的读取light probe，球谐函数相关计算
+    // gi.indirect.diffuse = lightProbe + lightMap
+
+    // LightProbe 动态，这里是perPixel,有 ShadeSHPerVertex 
     #if UNITY_SHOULD_SAMPLE_SH // 这里采样 环境光，对环境光计算,球谐函数用来计算漫反射，精度不需要那么高,所以可以当作漫反射
         o_gi.indirect.diffuse = ShadeSHPerPixel(normalWorld, data.ambient, data.worldPos);
     #endif
 
-    // 采样LightMap当作间接光源 indirectLight的diffuse    
+    // LightMap 静态
     #if defined(LIGHTMAP_ON)
         // Baked lightmaps
         // 烘培lightMap???还是解压lightmap 这里没有完全理解
@@ -221,6 +226,7 @@ inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3
 inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3 normalWorld, Unity_GlossyEnvironmentData glossIn)
 {
     // 间接光源的 diffuse 靠采样 lightmap获取 和 lightProbe 光照探针
+    // gi.indirect.diffuse = LightMap + lightProbe
     UnityGI o_gi = UnityGI_Base(data, occlusion, normalWorld);
     // 间接光源的 specular 靠采样 cubemap获取 反射探针
     o_gi.indirect.specular = UnityGI_IndirectSpecular(data, occlusion, glossIn); 

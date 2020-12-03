@@ -558,3 +558,11 @@ half3 Unity_GlossyEnvironment (UNITY_ARGS_TEXCUBE(tex), half4 hdr, Unity_GlossyE
 // ----------------------------------------------------------------------------
 
 #endif // UNITY_IMAGE_BASED_LIGHTING_INCLUDED
+
+
+// 这里写上这个函数， incidence vector i ，n is normal
+
+// float3 reflect( float3 i, float3 n )
+// {
+//   return i - 2.0 * n * dot(n,i);
+// }

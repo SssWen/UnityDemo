@@ -78,19 +78,26 @@ inline half4 Pow5 (half4 x)
     return x*x * x*x * x;
 }
 
-// F 函数 @wen
+// F 函数 @wen ,一般 directSpecular直接默认掠角是90度，也就是1
 // 使用近似的计算 F0 = n*v = 法线与视线 = cosA  Unity使用的是光方向 dot (光+视)/2 saturate(dot(light.dir, halfDir));
 inline half3 FresnelTerm (half3 F0, half cosA)
 {
     half t = Pow5 (1 - cosA);   // ala Schlick interpoliation
     return F0 + (1-F0) * t;
 }
+
+// 这里用于indirectSpecular 掠角跟gloss和metallic有关
+// FresnelLerp (specularColor, grazingTerm, NdotV);
+// F0 = specularColor
+// F90 = grazingTerm,跟gloss和metallic有关
+// cosA = NdotV
 inline half3 FresnelLerp (half3 F0, half3 F90, half cosA)
 {
     half t = Pow5 (1 - cosA);   // ala Schlick interpoliation
     return lerp (F0, F90, t);
 }
 // approximage Schlick with ^4 instead of ^5
+
 inline half3 FresnelLerpFast (half3 F0, half3 F90, half cosA)
 {
     half t = Pow4 (1 - cosA);
@@ -168,7 +175,7 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
     float lambdaV = NdotL * (NdotV * (1 - a) + a);
     float lambdaL = NdotV * (NdotL * (1 - a) + a);
 
-#if defined(SHADER_API_SWITCH)
+#if defined(SHADER_API_SWITCH) // 1e-4 f= 0.0001 f
     return 0.5f / (lambdaV + lambdaL + 1e-4f); // work-around against hlslcc rounding error
 #else
     return 0.5f / (lambdaV + lambdaL + 1e-5f);
