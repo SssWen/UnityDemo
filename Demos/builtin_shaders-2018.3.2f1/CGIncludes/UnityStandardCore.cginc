@@ -477,7 +477,7 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     //     UnityIndirect indirect;
     // };
     // BRDF 计算，根据UnityGI 采样贴图获取的 {indirectLight}
-    // gi.light直接光照, gi.indirect间接光照 计算PBS,这里使用 BRDF1_Unity_PBS，高质量
+    // gi.light直接光照, gi.indirect间接光照 计算PBS,这里使用 BRDF1_Unity_PBS, 高质量
     // 根据直接光源，间接光源，粗造度，法线 再次计算光照
     half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
 
