@@ -171,7 +171,7 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
 #else
     // Approximation of the above formulation (simplify the sqrt, not mathematically correct but close enough)
     // Unity 使用以下进行模拟G 函数 几何遮蔽函数
-    float a = roughness;
+    float a = roughness; //  roughness = roughtness^2;
     float lambdaV = NdotL * (NdotV * (1 - a) + a);
     float lambdaL = NdotV * (NdotL * (1 - a) + a);
 
@@ -188,6 +188,7 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
 // 法线 正态分布函数 distribution
 // Unity 的法线分布函数使用的是Trowbridge-Reitz GGX正态分布函数,https://learnopengl-cn.github.io/07%20PBR/01%20Theory/ 
 // 在粗糙度的影响下，还有多少比例法线可以反射到视角方向
+// NDF 正太分布函数
 inline float GGXTerm (float NdotH, float roughness)
 {
     float a2 = roughness * roughness;
@@ -301,6 +302,8 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     // HACK: theoretically we should divide diffuseTerm by Pi and not multiply specularTerm!
     // BUT 1) that will make shader look significantly darker than Legacy ones
     // and 2) on engine side "Non-important" lights have to be divided by Pi too in cases when they are injected into ambient SH
+
+    // roughness = roughness^2;
     float roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 #if UNITY_BRDF_GGX
     // GGX with roughtness to 0 would mean no specular at all, using max(roughness, 0.002) here to match HDrenderloop roughtness remapping.
