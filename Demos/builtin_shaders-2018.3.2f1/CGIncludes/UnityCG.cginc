@@ -362,7 +362,7 @@ half3 ShadeSH9 (half4 normal)
     // Linear + constant polynomial terms
     half3 res = SHEvalLinearL0L1 (normal);
 
-    // Quadratic polynomials
+    // Quadratic polynomials 二次多项式
     res += SHEvalLinearL2 (normal);
 
 #   ifdef UNITY_COLORSPACE_GAMMA

@@ -32,6 +32,7 @@ inline half3 EnergyConservationBetweenDiffuseAndSpecular (half3 albedo, half3 sp
     #endif
 }
 
+// 漫反射比例 = 1 - 反射比例 
 inline half OneMinusReflectivityFromMetallic(half metallic)
 {
     // We'll need oneMinusReflectivity, so
@@ -39,15 +40,21 @@ inline half OneMinusReflectivityFromMetallic(half metallic)
     // store (1-dielectricSpec) in unity_ColorSpaceDielectricSpec.a, then
     //   1-reflectivity = lerp(alpha, 0, metallic) = alpha + metallic*(0 - alpha) =
     //                  = alpha - metallic * alpha
+    // unity_ColorSpaceDielectricSpec 定义了绝缘体高光颜色喝反射率是一个经验值，Linear Space half4(0.04, 0.04, 0.04, 1.0 - 0.04)
+    // Gamma Space half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)
     half oneMinusDielectricSpec = unity_ColorSpaceDielectricSpec.a;
     return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;
+    // gamma空间 return 0.79*(1-metallic);  
+    // Linear空间 0.96*(1-metallic); 
 }
 
 inline half3 DiffuseAndSpecularFromMetallic (half3 albedo, half metallic, out half3 specColor, out half oneMinusReflectivity)
 {
-    specColor = lerp (unity_ColorSpaceDielectricSpec.rgb, albedo, metallic);
+    specColor = lerp (unity_ColorSpaceDielectricSpec.rgb, albedo, metallic); 
+    // 当金属度为1时候，specColor就是物体本身颜色。
+    // 当金属度为0的时候,specColor几乎没有, 非金属的东西基本是diffuseColor。
     oneMinusReflectivity = OneMinusReflectivityFromMetallic(metallic);
-    return albedo * oneMinusReflectivity;
+    return albedo * oneMinusReflectivity; // albedo * 漫反射比例
 }
 
 inline half3 PreMultiplyAlpha (half3 diffColor, half alpha, half oneMinusReflectivity, out half outModifiedAlpha)
@@ -129,7 +136,7 @@ half3 UnpackScaleNormalRGorAG(half4 packednormal, half bumpScale)
         #if (SHADER_TARGET >= 30)
             // SM2.0: instruction count limitation
             // SM2.0: normal scaler is not supported
-            normal.xy *= bumpScale;
+            normal.xy *= bumpScale;            
         #endif
         normal.z = sqrt(1.0 - saturate(dot(normal.xy, normal.xy)));
         return normal;

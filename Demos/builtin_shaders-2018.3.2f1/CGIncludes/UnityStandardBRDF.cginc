@@ -80,6 +80,7 @@ inline half4 Pow5 (half4 x)
 
 // F 函数 @wen ,一般 directSpecular直接默认掠角是90度，也就是1
 // 使用近似的计算 F0 = n*v = 法线与视线 = cosA  Unity使用的是光方向 dot (光+视)/2 saturate(dot(light.dir, halfDir));
+// F0代表的是 当光线垂直平面时的菲涅尔反射率值。同时因为它满足0-1 RGB分量，我们也叫他镜面颜色 specular color
 inline half3 FresnelTerm (half3 F0, half cosA)
 {
     half t = Pow5 (1 - cosA);   // ala Schlick interpoliation
@@ -350,6 +351,7 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
 
     // color = diffColor(间接光源漫反射+直接光源漫反射【灯光颜色】*diffuse系数) + DGF*直接光源颜色【灯光颜色】 +
     // 表面衰减系数*间接光源镜面反射*菲尼尔插值 ？？？？
+    // specColor 就是F0，物体的反射系数
     half3 color = diffColor * (gi.diffuse + light.color * diffuseTerm) // 漫反射 = 间接光照漫反射 + 直接光照漫反射*diffuseTerm
                     + specularTerm * light.color * FresnelTerm (specColor, lh) //直接镜面反射 CookTorrance SpecularBRDF = DGF/4NLNV
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv); // 间接镜面反射

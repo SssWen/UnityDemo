@@ -194,7 +194,9 @@ struct FragmentCommonData
 // 高光流设置， alpha通道用于粗超度。。，设置初始的 diffuse，specular
 inline FragmentCommonData SpecularSetup (float4 i_tex)
 {
-    half4 specGloss = SpecularGloss(i_tex.xy);
+    // 采样_SpecGlossMap 获取 高光颜色 specGloss
+    // 获取smoothness
+    half4 specGloss = SpecularGloss(i_tex.xy); 
     half3 specColor = specGloss.rgb;
     half smoothness = specGloss.a;
 
@@ -229,6 +231,8 @@ inline FragmentCommonData RoughnessSetup(float4 i_tex)
 }
 
 // 金属流 设置
+// 金属度 确定 漫反射为主还是 高光为主
+// 光滑度 确定 物体高光部分是否清晰
 inline FragmentCommonData MetallicSetup (float4 i_tex)
 {
     half2 metallicGloss = MetallicGloss(i_tex.xy);
@@ -237,11 +241,12 @@ inline FragmentCommonData MetallicSetup (float4 i_tex)
     // smoothness = Metallic 的 A通道 * smoothness
     half oneMinusReflectivity;
     half3 specColor;
+    // 金属度只是用来算 diffColor 和specColor的，粗糙度参与后续 BRDF 计算 
     half3 diffColor = DiffuseAndSpecularFromMetallic (Albedo(i_tex), metallic, /*out*/ specColor, /*out*/ oneMinusReflectivity);
 
     FragmentCommonData o = (FragmentCommonData)0;
-    o.diffColor = diffColor;
-    o.specColor = specColor;
+    o.diffColor = diffColor; // 根据金属度 确定, diffColor = albedo*(1-metallic)
+    o.specColor = specColor; // 根据金属度 确定, specColor = lerp(0.04,albedo,metallic)
     o.oneMinusReflectivity = oneMinusReflectivity;
     o.smoothness = smoothness;
     return o;
@@ -436,10 +441,11 @@ VertexOutputForwardBase vertForwardBase (VertexInput v)
     return o;
 }
 
+// Core
 half4 fragForwardBaseInternal (VertexOutputForwardBase i)
 {
     UNITY_APPLY_DITHER_CROSSFADE(i.pos.xy);
-
+    // MetallicSetup () // 根据金属度 确定初始 diffColor,和 specColor
     // 设置 s 包含posWorld,eyeVec,normalWorld的属性值,初始的diffuseColor和SpecularColor默认值
     FRAGMENT_SETUP(s) // 这里区分开 金属流 和 高光流，它们得到的参数是一样的，只是值不一样。
     // 并且设置diffuse = 采样Albodo贴图， specular颜色 = 设置的specular
@@ -461,11 +467,12 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
 
     // 采样_OcclusionMap，用于计算indirect Light,包括来至ambient 和 reflections    
     half occlusion = Occlusion(i.tex.xy);
-    // GI 全局光照计算 wen, 
+    // GI 全局光照计算 wen, 都是外部模拟，跟物体本身属性没关系，用法线采样
     // 直接光源使用data.light,直接传递
     // 计算indirectLight的 diffuse和spcular，都需要进行乘上遮蔽贴图
     // gi.indirect.diffuse LightMap + Light Probe
     // gi.indirect.specular reflection Probe
+    // 在算光照之前，把金属度，粗糙度算好
     UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
     //  直接光照 light = data.light * atten,计算阴影的衰减值
     //  间接光照 indirect 的 diffuse = AO 【乘上】 采样lightmap + 计算光照探针 light probe [UnityGI_Base]
@@ -478,7 +485,8 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     // };
     // BRDF 计算，根据UnityGI 采样贴图获取的 {indirectLight}
     // gi.light直接光照, gi.indirect间接光照 计算PBS,这里使用 BRDF1_Unity_PBS, 高质量
-    // 根据直接光源，间接光源，粗造度，法线 再次计算光照
+    // 根据直接光源，间接光源，粗造度，法线 再次计算光照,
+    // BRDF1_Unity_PBS, s.diffColor s.specColor 根据金属度 算出来的颜色 
     half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
 
     // 自发光计算,Unity的自发光是直接采样贴图的
