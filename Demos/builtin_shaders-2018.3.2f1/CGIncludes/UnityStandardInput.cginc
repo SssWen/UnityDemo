@@ -53,7 +53,15 @@ sampler2D   _EmissionMap;
 
 //-------------------------------------------------------------------------------------
 // Input functions
-
+// Unity 目前只支持4套uv,可以从源码中看出来。
+// namespace UnityEngine.Rendering {
+//     public enum UVChannelFlags {
+//         UV0 = 1,
+//         UV1 = 2,
+//         UV2 = 4,
+//         UV3 = 8
+//     }
+// }
 struct VertexInput
 {
     float4 vertex   : POSITION;

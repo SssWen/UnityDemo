@@ -148,6 +148,8 @@ half3 UnpackScaleNormal(half4 packednormal, half bumpScale)
     return UnpackScaleNormalRGorAG(packednormal, bumpScale);
 }
 
+// unity 法线混合方式
+// https://blog.selfshadow.com/publications/blending-in-detail/
 half3 BlendNormals(half3 n1, half3 n2)
 {
     return normalize(half3(n1.xy + n2.xy, n1.z*n2.z));

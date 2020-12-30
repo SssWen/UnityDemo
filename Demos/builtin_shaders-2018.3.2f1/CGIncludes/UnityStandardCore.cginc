@@ -131,6 +131,7 @@ float3 PerPixelWorldNormal(float4 i_tex, float4 tangentToWorld[3])
     #endif
 
     half3 normalTangent = NormalInTangentSpace(i_tex);
+    // dx*a + dy*b + dz*c, 基向量
     float3 normalWorld = NormalizePerPixelNormal(tangent * normalTangent.x + binormal * normalTangent.y + normal * normalTangent.z); // @TODO: see if we can squeeze this normalize on SM2.0 as well
 #else
     float3 normalWorld = normalize(tangentToWorld[2].xyz);
@@ -486,7 +487,7 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     // BRDF 计算，根据UnityGI 采样贴图获取的 {indirectLight}
     // gi.light直接光照, gi.indirect间接光照 计算PBS,这里使用 BRDF1_Unity_PBS, 高质量
     // 根据直接光源，间接光源，粗造度，法线 再次计算光照,
-    // BRDF1_Unity_PBS, s.diffColor s.specColor 根据金属度 算出来的颜色 
+    // BRDF1_Unity_PBS, s.diffColor s.specColor 根据金属度 算出来的颜色  FragmentCommonData s = from metallic
     half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
 
     // 自发光计算,Unity的自发光是直接采样贴图的
