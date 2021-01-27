@@ -267,6 +267,7 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     float3 normal, float3 viewDir,
     UnityLight light, UnityIndirect gi) // （直接光照） （间接光照颜色diffuse + specular）
 {
+    // 1 - smoothness
     float perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
     float3 halfDir = Unity_SafeNormalize (float3(light.dir) + viewDir);
 

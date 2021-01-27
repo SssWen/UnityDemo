@@ -26,7 +26,7 @@ inline half3 EnergyConservationBetweenDiffuseAndSpecular (half3 albedo, half3 sp
     #if !UNITY_CONSERVE_ENERGY
         return albedo;
     #elif UNITY_CONSERVE_ENERGY_MONOCHROME
-        return albedo * oneMinusReflectivity;
+        return albedo * oneMinusReflectivity; // 最亮的系数
     #else
         return albedo * (half3(1,1,1) - specColor);
     #endif

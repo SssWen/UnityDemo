@@ -218,7 +218,7 @@ inline FragmentCommonData RoughnessSetup(float4 i_tex)
     half2 metallicGloss = MetallicRough(i_tex.xy);
     half metallic = metallicGloss.x;
     half smoothness = metallicGloss.y; // this is 1 minus the square root of real roughness m.
-
+    
     half oneMinusReflectivity;
     half3 specColor;
     half3 diffColor = DiffuseAndSpecularFromMetallic(Albedo(i_tex), metallic, /*out*/ specColor, /*out*/ oneMinusReflectivity);
@@ -240,6 +240,7 @@ inline FragmentCommonData MetallicSetup (float4 i_tex)
     half metallic = metallicGloss.x; // Metallic 的 R通道
     half smoothness = metallicGloss.y; // this is 1 minus the square root of real roughness m.
     // smoothness = Metallic 的 A通道 * smoothness
+    // 粗糙度在材质中表现为 0 为粗糙，1为金属，猜想可能是为了方便调节调整范围
     half oneMinusReflectivity;
     half3 specColor;
     // 金属度只是用来算 diffColor 和specColor的，粗糙度参与后续 BRDF 计算 
