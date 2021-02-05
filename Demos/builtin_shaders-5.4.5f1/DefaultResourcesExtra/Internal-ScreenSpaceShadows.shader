@@ -165,7 +165,7 @@ inline float4 getShadowCoord( float4 wpos, fixed4 cascadeWeights )
  */
 inline float4 getShadowCoord_SingleCascade( float4 wpos )
 {
-	return float4( mul (unity_WorldToShadow[0], wpos).xyz, 0);
+	return float4( mul (unity_WorldToShadow[0], wpos).xyz, 0); // 变换到光源空间，进行shadowmap采样
 }
 
 /**
@@ -237,6 +237,7 @@ half sampleShadowmap_PCF3x3 (float4 coord, float2 receiverPlaneDepthBias)
  * Algorithm: http://the-witness.net/news/2013/09/shadow-mapping-summary-part-1/
  * Implementation example: http://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
  */
+ // coord.z 深度值 对比 用coord.xy采样shadowmap后的深度值
 half sampleShadowmap_PCF5x5 (float4 coord, float2 receiverPlaneDepthBias)
 {
 
