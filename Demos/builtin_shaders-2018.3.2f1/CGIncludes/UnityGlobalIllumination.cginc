@@ -169,12 +169,13 @@ inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_G
 {
     half3 specular;
 
+    // 是否使用 BoxProjection 改变 反射向量方向 reflUVW
     #ifdef UNITY_SPECCUBE_BOX_PROJECTION
         // we will tweak reflUVW in glossIn directly (as we pass it to Unity_GlossyEnvironment twice for probe0 and probe1),
         //  so keep original to pass into BoxProjectedCubemapDirection
         // 如果反射探针中开启BOX_PROJECTION模式
         // 开启BOX_PROJECTION，反射探针的采样会根据物体移动发生变化
-        half3 originalReflUVW = glossIn.reflUVW;
+        half3 originalReflUVW = glossIn.reflUVW; // reflect(-data.worldViewDir, s.Normal); 视线与法线的反射方向
         glossIn.reflUVW = BoxProjectedCubemapDirection (originalReflUVW, data.worldPos, data.probePosition[0], data.boxMin[0], data.boxMax[0]);
     #endif
 

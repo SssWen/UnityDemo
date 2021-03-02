@@ -544,7 +544,8 @@ half3 Unity_GlossyEnvironment (UNITY_ARGS_TEXCUBE(tex), half4 hdr, Unity_GlossyE
 
     half mip = perceptualRoughnessToMipmapLevel(perceptualRoughness);
     half3 R = glossIn.reflUVW;
-    half4 rgbm = UNITY_SAMPLE_TEXCUBE_LOD(tex, R, mip);
+    half4 rgbm = UNITY_SAMPLE_TEXCUBE_LOD(tex, R, mip); // 默认的 reflUVW = reflect(-ViewDir,Normal);
+    // 但是 reflUVW 可以被ProjectionBox改变反射的方向，类似光线追踪，Unity 使用 Reflection Probe Box 用来调整 reflUVW 方向
 
     return DecodeHDR(rgbm, hdr);
 }

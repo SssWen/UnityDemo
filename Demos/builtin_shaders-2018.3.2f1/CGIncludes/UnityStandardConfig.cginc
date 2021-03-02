@@ -27,7 +27,8 @@
 
 // disregarding what is set in TierSettings, some features have hardware restrictions
 // so we still add safety net, otherwise we might end up with shaders failing to compile
-
+// 现阶段可以在Project Setting 里的 Graphics 设置 shader的Quality,目前使用第三个Tier3,高级版本。
+// 在UnityLighitngCommon.cginc 的UnityGIInput里定义，使用 defined(UNITY_SPECCUBE_BOX_PROJECTION),定义变量
 #if defined(SHADER_TARGET_SURFACE_ANALYSIS)
     // For surface shader code analysis pass, disable some features that don't affect inputs/outputs
     #undef UNITY_SPECCUBE_BOX_PROJECTION

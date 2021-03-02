@@ -44,7 +44,7 @@ inline half OneMinusReflectivityFromMetallic(half metallic)
     // Gamma Space half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)
     half oneMinusDielectricSpec = unity_ColorSpaceDielectricSpec.a;
     return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;
-    // gamma空间 return 0.79*(1-metallic);  
+    // gamma空间 return 0.779*(1-metallic);  
     // Linear空间 0.96*(1-metallic); 
 }
 
@@ -238,8 +238,10 @@ inline float3 BoxProjectedCubemapDirection (float3 worldRefl, float3 worldPos, f
 {
     // Do we have a valid reflection probe? 判断是否有合法的反射探针
     UNITY_BRANCH
-    if (cubemapCenter.w > 0.0)
+    if (cubemapCenter.w > 0.0) // Box Projection toggle.控制是否使用 BoxProjected 调整采样Cubemap的 uvw 反射方向.
     {
+        // https://zhuanlan.zhihu.com/p/35495074 解释包围盒碰撞问题
+        // w分量代表了当前Reflection Probe是否使用Box Projection，对应Reflection Probe Inspector中的开关
         float3 nrdir = normalize(worldRefl);
 
         #if 1
@@ -259,8 +261,9 @@ inline float3 BoxProjectedCubemapDirection (float3 worldRefl, float3 worldPos, f
 
         float fa = min(min(rbminmax.x, rbminmax.y), rbminmax.z);
 
-        worldPos -= cubemapCenter.xyz;
-        worldRefl = worldPos + nrdir * fa;
+        worldPos -= cubemapCenter.xyz; // 中心到片源方向 = fragPos - BoxCenter 
+         // dir*far = 片源 到采样点方向
+        worldRefl = worldPos + nrdir * fa; // 中心到采样点方向
     }
     return worldRefl;
 }
