@@ -84,7 +84,7 @@ inline half4 Pow5 (half4 x)
 inline half3 FresnelTerm (half3 F0, half cosA)
 {
     half t = Pow5 (1 - cosA);   // ala Schlick interpoliation
-    return F0 + (1-F0) * t;
+    return F0 + (1-F0) * t; // lerp(F0,1,t);
 }
 
 // 这里用于indirectSpecular 掠角跟gloss和metallic有关
@@ -356,6 +356,9 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     half3 color = diffColor * (gi.diffuse + light.color * diffuseTerm) // 漫反射 = 间接光照漫反射 + 直接光照漫反射*diffuseTerm
                     + specularTerm * light.color * FresnelTerm (specColor, lh) //直接镜面反射 CookTorrance SpecularBRDF = DGF/4NLNV
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv); // 间接镜面反射
+    // 转换下
+    gi = gi.diffuse*diffColor + surfaceReduction * gi.specular * FresnelLerp;
+    directColor = light.Color * (diffuseTerm*diffColor + specularTerm*FresnelTerm());
     // 最后一个surfaceReduction 
     // https://zhuanlan.zhihu.com/p/68025039
     return half4(color, 1);
@@ -452,7 +455,7 @@ half4 BRDF2_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
     half3 color =   (diffColor + specularTerm * specColor) * light.color * nl
                     + gi.diffuse * diffColor
-                    + surfaceReduction * gi.specular * FresnelLerpFast (specColor, grazingTerm, nv);
+                    + surfaceReduction * gi.specular * FresnelLerpFast (specColor, grazingTerm, nv);                    
 
     return half4(color, 1);
 }

@@ -43,7 +43,7 @@ inline half OneMinusReflectivityFromMetallic(half metallic)
     // unity_ColorSpaceDielectricSpec 定义了绝缘体高光颜色喝反射率是一个经验值，Linear Space half4(0.04, 0.04, 0.04, 1.0 - 0.04)
     // Gamma Space half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)
     half oneMinusDielectricSpec = unity_ColorSpaceDielectricSpec.a;
-    return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;
+    return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec; // 用的这个
     // gamma空间 return 0.779*(1-metallic);  
     // Linear空间 0.96*(1-metallic); 
 }
@@ -53,7 +53,7 @@ inline half3 DiffuseAndSpecularFromMetallic (half3 albedo, half metallic, out ha
     specColor = lerp (unity_ColorSpaceDielectricSpec.rgb, albedo, metallic); 
     // 当金属度为1时候，specColor就是物体本身颜色。
     // 当金属度为0的时候,specColor几乎没有, 非金属的东西基本是diffuseColor。
-    oneMinusReflectivity = OneMinusReflectivityFromMetallic(metallic);
+    oneMinusReflectivity = OneMinusReflectivityFromMetallic(metallic); 
     return albedo * oneMinusReflectivity; // albedo * 漫反射比例
 }
 

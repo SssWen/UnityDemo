@@ -28,6 +28,7 @@ half SmoothnessToRoughness(half smoothness)
     return (1 - smoothness) * (1 - smoothness);
 }
 
+// Smoothness与Roughness的转换: Roughness = 1 - Smoothness.
 float SmoothnessToPerceptualRoughness(float smoothness)
 {
     return (1 - smoothness);
