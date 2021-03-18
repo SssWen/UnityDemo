@@ -449,6 +449,7 @@ half4 BRDF3_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     half nv = saturate(dot(normal, viewDir));
 
     // Vectorize Pow4 to save instructions
+    // Pow4 可以节省Instuctions
     half2 rlPow4AndFresnelTerm = Pow4 (float2(dot(reflDir, light.dir), 1-nv));  // use R.L instead of N.H to save couple of instructions
     half rlPow4 = rlPow4AndFresnelTerm.x; // power exponent must match kHorizontalWarpExp in NHxRoughness() function in GeneratedTextures.cpp
     half fresnelTerm = rlPow4AndFresnelTerm.y;
