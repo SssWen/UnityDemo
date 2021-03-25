@@ -140,6 +140,7 @@ inline fixed4 getCascadeWeights(float3 wpos, float z)
  * Gets the cascade weights based on the world position of the fragment and the poisitions of the split spheres for each cascade.
  * Returns a float4 with only one component set that corresponds to the appropriate cascade.
  */
+ // 返回对应的一个cascade,根据 像素与sphere球心距离判断,用哪个cascade
 inline fixed4 getCascadeWeights_splitSpheres(float3 wpos)
 {
     float3 fromCenter0 = wpos.xyz - unity_ShadowSplitSpheres[0].xyz;
@@ -162,6 +163,7 @@ inline float4 getShadowCoord( float4 wpos, fixed4 cascadeWeights )
     float3 sc1 = mul (unity_WorldToShadow[1], wpos).xyz;
     float3 sc2 = mul (unity_WorldToShadow[2], wpos).xyz;
     float3 sc3 = mul (unity_WorldToShadow[3], wpos).xyz;
+    // 根据cascadeWeights(1,0,0,0) 判断用哪个cascade 对应的UV 去采样对应的cascadeMap.
     float4 shadowMapCoordinate = float4(sc0 * cascadeWeights[0] + sc1 * cascadeWeights[1] + sc2 * cascadeWeights[2] + sc3 * cascadeWeights[3], 1);
 #if defined(UNITY_REVERSED_Z)
     float  noCascadeWeights = 1 - dot(cascadeWeights, float4(1, 1, 1, 1));
@@ -173,7 +175,7 @@ inline float4 getShadowCoord( float4 wpos, fixed4 cascadeWeights )
 /**
  * Same as the getShadowCoord; but optimized for single cascade
  */
-inline float4 getShadowCoord_SingleCascade( float4 wpos )
+inline float4 getShadowCoord_SingleCascade( float4 wpos ) // wolrdToLight,转换到Light空间
 {
     return float4( mul (unity_WorldToShadow[0], wpos).xyz, 0);
 }
@@ -204,6 +206,7 @@ inline float3 computeCameraSpacePosFromDepthAndInvProjMat(v2f i)
 /**
 * Get camera space coord from depth and info from VS
 */
+// 从 depthMap 获取depth, 重新算出 vertex 到 相机的距离.
 inline float3 computeCameraSpacePosFromDepthAndVSInfo(v2f i)
 {
     float zdepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv.xy);
@@ -218,7 +221,7 @@ inline float3 computeCameraSpacePosFromDepthAndVSInfo(v2f i)
     float3 vposPersp = i.ray * depth;
     float3 vposOrtho = lerp(i.orthoPosNear, i.orthoPosFar, zdepth);
     // pick the perspective or ortho position as needed
-    float3 camPos = lerp(vposPersp, vposOrtho, unity_OrthoParams.w);
+    float3 camPos = lerp(vposPersp, vposOrtho, unity_OrthoParams.w); // 0 is perspective, 1 is ortho
     return camPos.xyz;
 }
 
@@ -227,7 +230,7 @@ inline float3 computeCameraSpacePosFromDepth(v2f i);
 /**
  *  Hard shadow
  */
-fixed4 frag_hard (v2f i) : SV_Target
+fixed4 frag_hard (v2f i) : SV_Target // 前提条件,必须要有 _CameraDepthTexture, 和 shadowMap,也就是对应的pass必须开启.
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i); // required for sampling the correct slice of the shadow map render texture array
     float4 wpos;
@@ -238,14 +241,15 @@ fixed4 frag_hard (v2f i) : SV_Target
     wpos.w = 1.0f;
     vpos = mul(unity_WorldToCamera, wpos).xyz;
 #else
-    vpos = computeCameraSpacePosFromDepth(i);
-    wpos = mul (unity_CameraToWorld, float4(vpos,1));
+    vpos = computeCameraSpacePosFromDepth(i); // 到相机空间,根据depth值,重新算出camera空间下的坐标. vpos.z = 顶点到Camera的距离.
+    wpos = mul (unity_CameraToWorld, float4(vpos,1)); // 到世界空间
 #endif
-    fixed4 cascadeWeights = GET_CASCADE_WEIGHTS (wpos, vpos.z);
-    float4 shadowCoord = GET_SHADOW_COORDINATES(wpos, cascadeWeights);
+    fixed4 cascadeWeights = GET_CASCADE_WEIGHTS (wpos, vpos.z); // 判断用哪个 cascade,存放在cascadeWeights上,值为 0,1
+    // unity_WorldToShadow(wpos) 转换到对应的Light空间.因为是正交矩阵,算出UV.
+    float4 shadowCoord = GET_SHADOW_COORDINATES(wpos, cascadeWeights); // 用对应cascade Light空间下的UV,采样 shadowmap
 
     //1 tap hard shadow
-    fixed shadow = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord);
+    fixed shadow = UNITY_SAMPLE_SHADOW(_ShadowMapTexture, shadowCoord); // 采样shadowmap,并拿depth值,与shadowmap 值 在screenSpace空间下进行比较.
     shadow = lerp(_LightShadowData.r, 1.0, shadow);
 
     fixed4 res = shadow;
@@ -266,10 +270,10 @@ fixed4 frag_pcfSoft(v2f i) : SV_Target
     wpos.w = 1.0f;
     vpos = mul(unity_WorldToCamera, wpos).xyz;
 #else
-    vpos = computeCameraSpacePosFromDepth(i);
+    vpos = computeCameraSpacePosFromDepth(i); // 采样到相机空间
 
     // sample the cascade the pixel belongs to
-    wpos = mul(unity_CameraToWorld, float4(vpos,1));
+    wpos = mul(unity_CameraToWorld, float4(vpos,1)); // 转换到世界空间
 #endif
     fixed4 cascadeWeights = GET_CASCADE_WEIGHTS(wpos, vpos.z);
     float4 coord = GET_SHADOW_COORDINATES(wpos, cascadeWeights);

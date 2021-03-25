@@ -54,7 +54,7 @@ sampler2D_float _LightTexture0;
 
 // 使用了 shadow cascacad 就定义SHADOWS_SCREEN
 #if defined (SHADOWS_SCREEN) // 使用了方向光产生投影，就产生贴图
-sampler2D _ShadowMapTexture;
+sampler2D _ShadowMapTexture; // 使用了 cascade, shadowmapTexture会被分成4块 如果cascade值为4的话.
 #endif
 
 #if defined (SHADOWS_SHADOWMASK)
