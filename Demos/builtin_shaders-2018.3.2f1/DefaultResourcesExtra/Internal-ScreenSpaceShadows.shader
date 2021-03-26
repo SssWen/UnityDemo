@@ -153,6 +153,26 @@ inline fixed4 getCascadeWeights_splitSpheres(float3 wpos)
     return weights;
 }
 
+
+// 增加接缝混合,Unity 没有做不同层级的Shadowmap 接缝混合, 接缝中会有明显的精度差异.
+inline fixed4 getCascadeWeights_splitSpheres(float3 wpos, out fixed4 anotherWeights, out float4 distances2)
+{
+    float3 fromCenter0 = wpos.xyz - unity_ShadowSplitSpheres[0].xyz;
+    float3 fromCenter1 = wpos.xyz - unity_ShadowSplitSpheres[1].xyz;
+    float3 fromCenter2 = wpos.xyz - unity_ShadowSplitSpheres[2].xyz;
+    float3 fromCenter3 = wpos.xyz - unity_ShadowSplitSpheres[3].xyz;
+    distances2 = float4(dot(fromCenter0,fromCenter0), dot(fromCenter1,fromCenter1), dot(fromCenter2,fromCenter2), dot(fromCenter3,fromCenter3));
+    fixed4 weights = float4(distances2 < unity_ShadowSplitSqRadii);
+    fixed4 originalWeights = weights;
+    weights.yzw = saturate(weights.yzw - weights.xyz);
+    anotherWeights = originalWeights - weights;
+    return weights;
+}
+// ————————————————
+// 原文链接：https://blog.csdn.net/NotMz/article/details/82053659
+
+
+
 /**
  * Returns the shadowmap coordinates for the given fragment based on the world position and z-depth.
  * These coordinates belong to the shadowmap atlas that contains the maps for all cascades.

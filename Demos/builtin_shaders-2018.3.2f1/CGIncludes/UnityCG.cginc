@@ -872,6 +872,7 @@ float UnityDecodeCubeShadowDepth (float4 vals)
 }
 
 
+// Unity 在 生成 shadowmap的过程中,计算 Normal Bias
 float4 UnityClipSpaceShadowCasterPos(float4 vertex, float3 normal)
 {
     float4 wPos = mul(unity_ObjectToWorld, vertex);
@@ -946,6 +947,7 @@ float4 UnityApplyLinearShadowBias(float4 clipPos)
     #define TRANSFER_SHADOW_CASTER_NOPOS_LEGACY(o,opos) \
         opos = UnityObjectToClipPos(v.vertex.xyz); \
         opos = UnityApplyLinearShadowBias(opos);
+    // Android 走这里, 对Pos 进行 NormalBias.
     #define TRANSFER_SHADOW_CASTER_NOPOS(o,opos) \
         opos = UnityClipSpaceShadowCasterPos(v.vertex, v.normal); \
         opos = UnityApplyLinearShadowBias(opos);
