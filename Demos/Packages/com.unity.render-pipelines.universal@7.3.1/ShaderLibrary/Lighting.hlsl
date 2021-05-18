@@ -329,7 +329,7 @@ inline void InitializeBRDFData(half3 albedo, half metallic, half3 specular, half
     half reflectivity = 1.0 - oneMinusReflectivity;
 
     outBRDFData.diffuse = albedo * oneMinusReflectivity;
-    outBRDFData.specular = lerp(kDieletricSpec.rgb, albedo, metallic);
+    outBRDFData.specular = lerp(kDieletricSpec.rgb, albedo, metallic); 
 #endif
 
     outBRDFData.grazingTerm = saturate(smoothness + reflectivity);
@@ -350,7 +350,10 @@ half3 EnvironmentBRDF(BRDFData brdfData, half3 indirectDiffuse, half3 indirectSp
 {
     half3 c = indirectDiffuse * brdfData.diffuse;
     float surfaceReduction = 1.0 / (brdfData.roughness2 + 1.0);
-    c += surfaceReduction * indirectSpecular * lerp(brdfData.specular, brdfData.grazingTerm, fresnelTerm);
+    c += surfaceReduction * indirectSpecular * lerp(brdfData.specular, brdfData.grazingTerm, fresnelTerm); // FresnelLerp (specColor, grazingTerm, nv)
+    // surfaceReduction*gi.specular* FresnelLerp
+    // surfaceReduction*gi.specular* lerp(F0,F90,pow5(1-cosA))
+    // surfaceReduction*gi.specular* lerp(brdfData.specular, brdfData.grazingTerm, Pow4(1.0 - saturate(dot(N,V)); // 一致
     return c;
 }
 
@@ -370,8 +373,9 @@ half3 DirectBDRF(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half
 
     // GGX Distribution multiplied by combined approximation of Visibility and Fresnel
     // BRDFspec = (D * V * F) / 4.0
+    // https://learnopengl-cn.github.io/07%20PBR/01%20Theory/ D与cook-torrance 完全一致
     // D = roughness^2 / ( NoH^2 * (roughness^2 - 1) + 1 )^2
-    // V * F = 1.0 / ( LoH^2 * (roughness + 0.5) )
+    // V * F = 1.0 / ( LoH^2 * (roughness + 0.5) ) 
     // See "Optimizing PBR for Mobile" from Siggraph 2015 moving mobile graphics course
     // https://community.arm.com/events/1155
 
@@ -379,6 +383,12 @@ half3 DirectBDRF(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half
     // We further optimize a few light invariant terms
     // brdfData.normalizationTerm = (roughness + 0.5) * 4.0 rewritten as roughness * 4.0 + 2.0 to a fit a MAD.
     float d = NoH * NoH * brdfData.roughness2MinusOne + 1.00001f;
+    // 正太分布函数(镜面分布函数(其实就是高光比例)) D = brdfData.roughness2 / ((d * d), 微平面有多少比例与方向H一致. 比如只有35%法线与 h一致,则返回0.35.
+    // D = brdfData.roughness2 / (NoH * NoH * brdfData.roughness2MinusOne + 1)^2
+    // D = roughness^2 / ( NoH^2 * (roughness^2 - 1) + 1 )^2
+    // D = roughness^2 / (d*d)
+
+    // V * F = 1.0 / ( LoH^2 * (roughness + 0.5) )
     half LoH2 = LoH * LoH;    
     half specularTerm = brdfData.roughness2 / ((d * d) * max(0.1h, LoH2) * brdfData.normalizationTerm);    
 
@@ -390,6 +400,7 @@ half3 DirectBDRF(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half
     specularTerm = clamp(specularTerm, 0.0, 100.0); // Prevent FP16 overflow on mobiles
 #endif    
     half3 color = specularTerm * brdfData.specular + brdfData.diffuse;
+    // DirectSpecular 没有FresnelTerm(),没有菲涅尔,只有 cookTorrance DVF/4NL*NV
     return color;
 #else
     return brdfData.diffuse;
@@ -409,7 +420,7 @@ half3 DirectBDRF(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half
     // GGX Distribution multiplied by combined approximation of Visibility and Fresnel
     // BRDFspec = (D * V * F) / 4.0
     // D = roughness^2 / ( NoH^2 * (roughness^2 - 1) + 1 )^2
-    // V * F = 1.0 / ( LoH^2 * (roughness + 0.5) )
+    // V * F = 1.0 / ( LoH^2 * (roughness + 0.5) ) // 这个VF是进行优化 模拟后的结果. 模拟后的结果,N*L越接近90度的时候 结果是错误的,其他地方接近.
     // See "Optimizing PBR for Mobile" from Siggraph 2015 moving mobile graphics course
     // https://community.arm.com/events/1155
 
