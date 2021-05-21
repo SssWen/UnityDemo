@@ -476,6 +476,7 @@ half4 fragForwardBaseInternal (VertexOutputForwardBase i)
     // gi.indirect.specular reflection Probe
     // 在算光照之前，把金属度，粗糙度算好
     UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
+    // gi.directLight = data.light*atten;
     //  直接光照 light = data.light * atten,计算阴影的衰减值
     //  间接光照 indirect 的 diffuse = AO 【乘上】 采样lightmap + 计算光照探针 light probe [UnityGI_Base]
     //  间接光照 indirect 的 specular = AO 【乘上】 采样 反射探针 projection probe [UnityGI_IndirectSpecular]

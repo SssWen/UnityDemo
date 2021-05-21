@@ -823,7 +823,7 @@ half4 Cloth_LitPassFragment(Varyings input) : SV_Target
     // #endif
     half4 color = Cloth_FragmentPBR(inputData, surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.occlusion, surfaceData.emission, surfaceData.alpha, addData);
     
-    color.rgb = MixFog(color.rgb, inputData.fogCoord);  
+    color.rgb = MixFog(color.rgb, inputData.fogCoord);
     #ifdef _ANISTROPIC_ON    
         
     #endif
